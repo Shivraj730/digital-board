@@ -617,9 +617,7 @@ function startStaffSlideshow() {
 async function loadGallery() {
 
     const container =
-        document.getElementById(
-            "gallerySlider"
-        );
+        document.getElementById("gallerySlider");
 
     if (!container) {
         return;
@@ -632,74 +630,73 @@ async function loadGallery() {
         !Array.isArray(data) ||
         data.length === 0
     ) {
-
         container.innerHTML =
             '<div class="loading">फोटो ग्यालरी उपलब्ध छैन।</div>';
-
         return;
     }
 
     container.innerHTML = "";
 
-    data.forEach(
-        (item, index) => {
+    /*
+     * पहिले valid image भएका items मात्र तयार गर्ने
+     */
+    const galleryItems = data.filter(item => {
+        return getImageUrl(item.Image) !== "";
+    });
 
-            const imageUrl =
-                getImageUrl(item.Image);
-
-            /*
-             * Image नभएको item skip गर्ने
-             */
-            if (!imageUrl) {
-                return;
-            }
-
-
-            const slide =
-                document.createElement("div");
-
-            slide.className =
-                "gallery-slide";
-
-            if (index === 0) {
-                slide.classList.add("active");
-            }
-
-
-            const image =
-                document.createElement("img");
-
-            image.src =
-                imageUrl;
-
-            image.alt =
-                item.Title || "फोटो ग्यालरी";
-
-
-            slide.appendChild(image);
-
-            container.appendChild(slide);
-        }
-    );
-
-
-    const slides =
-        container.querySelectorAll(
-            ".gallery-slide"
-        );
-
-    if (slides.length === 0) {
-
+    if (galleryItems.length === 0) {
         container.innerHTML =
             '<div class="loading">फोटो उपलब्ध छैन।</div>';
-
         return;
     }
 
+    /*
+     * Gallery slides बनाउने
+     */
+    galleryItems.forEach((item, index) => {
+
+        const imageUrl =
+            getImageUrl(item.Image);
+
+        const slide =
+            document.createElement("div");
+
+        slide.className =
+            "gallery-slide";
+
+        /*
+         * वास्तविक पहिलो image लाई active गर्ने
+         */
+        if (index === 0) {
+            slide.classList.add("active");
+        }
+
+        const image =
+            document.createElement("img");
+
+        image.src =
+            imageUrl;
+
+        image.alt =
+            item.Title || "फोटो ग्यालरी";
+
+        /*
+         * Image load error भए console मा देखाउने
+         */
+        image.onerror = function () {
+            console.error(
+                "Gallery image failed to load:",
+                imageUrl
+            );
+        };
+
+        slide.appendChild(image);
+
+        container.appendChild(slide);
+    });
+
     startGallerySlideshow();
 }
-
-
 /* =========================================================
    12. GALLERY SLIDESHOW
    ========================================================= */
