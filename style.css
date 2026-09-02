@@ -1,1 +1,544 @@
+/* ============================================================
+   DIGITAL BOARD
+   ब्याँस गाउँपालिका, सुन्सेरा, दार्चुला
+   TV Resolution: 1920 x 1080
+   ============================================================ */
 
+
+/* ------------------------------------------------------------
+   BASIC RESET
+   ------------------------------------------------------------ */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    font-family: "Noto Sans Devanagari", "Nirmala UI", Arial, sans-serif;
+    background: #f5f5f5;
+    color: #222;
+    overflow: hidden;
+}
+
+
+/* ------------------------------------------------------------
+   HEADER
+   ------------------------------------------------------------ */
+
+.board-header {
+    width: 100%;
+    height: 15vh;
+
+    display: flex;
+    align-items: center;
+
+    background: white;
+    border-bottom: 3px solid #1d4f91;
+
+    padding: 10px 30px;
+}
+
+
+/* Logo को लागि reserved space */
+
+.logo-box {
+    width: 150px;
+    height: 120px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 2px dashed #aaa;
+
+    font-size: 20px;
+    color: #888;
+
+    flex-shrink: 0;
+}
+
+
+/* Header text */
+
+.header-title {
+    flex: 1;
+    text-align: center;
+}
+
+.header-title h1 {
+    margin: 0;
+
+    font-size: 42px;
+    font-weight: 700;
+}
+
+.header-title h2 {
+    margin: 5px 0;
+
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.header-title h3 {
+    margin: 0;
+
+    font-size: 23px;
+    font-weight: 500;
+}
+
+
+/* ------------------------------------------------------------
+   NEWS TICKER
+   ------------------------------------------------------------ */
+
+.ticker-section {
+    width: 100%;
+    height: 8vh;
+
+    display: flex;
+    align-items: stretch;
+
+    background: white;
+
+    border-bottom: 2px solid #ccc;
+}
+
+
+.ticker-label {
+    min-width: 190px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #1d4f91;
+    color: white;
+
+    font-size: 24px;
+    font-weight: 700;
+}
+
+
+.ticker-window {
+    flex: 1;
+
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+}
+
+
+.ticker-content {
+    white-space: nowrap;
+
+    font-size: 25px;
+    font-weight: 600;
+
+    padding-left: 100%;
+
+    animation: tickerMove 35s linear infinite;
+}
+
+
+@keyframes tickerMove {
+
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+
+/* ------------------------------------------------------------
+   MAIN CONTENT
+   ------------------------------------------------------------ */
+
+.main-content {
+    width: 100%;
+    height: 77vh;
+
+    display: grid;
+
+    /*
+       LEFT 60%
+       RIGHT 40%
+    */
+    grid-template-columns: 60% 40%;
+
+    gap: 12px;
+
+    padding: 12px;
+}
+
+
+/* ------------------------------------------------------------
+   COMMON SECTION
+   ------------------------------------------------------------ */
+
+.notice-section,
+.officials-section,
+.staff-section,
+.gallery-section {
+
+    background: white;
+
+    border: 1px solid #ddd;
+
+    border-radius: 6px;
+
+    overflow: hidden;
+}
+
+
+.section-title {
+
+    height: 45px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 15px;
+
+    background: #1d4f91;
+
+    color: white;
+
+    font-size: 23px;
+    font-weight: 700;
+}
+
+
+/* ------------------------------------------------------------
+   LEFT NOTICE
+   ------------------------------------------------------------ */
+
+.notice-section {
+
+    height: 100%;
+}
+
+
+.notice-slider {
+
+    height: calc(100% - 45px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+
+    overflow: hidden;
+
+    background: #eee;
+}
+
+
+.notice-slide {
+
+    width: 100%;
+    height: 100%;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-direction: column;
+}
+
+
+.notice-slide.active {
+    display: flex;
+}
+
+
+.notice-slide img {
+
+    max-width: 96%;
+    max-height: 88%;
+
+    object-fit: contain;
+
+    border-radius: 4px;
+}
+
+
+.notice-title {
+
+    width: 95%;
+
+    padding: 8px;
+
+    text-align: center;
+
+    font-size: 23px;
+    font-weight: 700;
+
+    background: white;
+
+    border-top: 2px solid #ddd;
+}
+
+
+/* ------------------------------------------------------------
+   RIGHT COLUMN
+   ------------------------------------------------------------ */
+
+.right-column {
+
+    height: 100%;
+
+    display: grid;
+
+    grid-template-rows:
+        36%
+        34%
+        30%;
+
+    gap: 10px;
+}
+
+
+/* ------------------------------------------------------------
+   ELECTED OFFICIALS
+   ------------------------------------------------------------ */
+
+.officials-container {
+
+    height: calc(100% - 45px);
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    padding: 10px;
+
+    overflow: hidden;
+}
+
+
+.official-card {
+
+    width: 30%;
+
+    height: 90%;
+
+    text-align: center;
+
+    background: #fafafa;
+
+    border: 1px solid #ddd;
+
+    border-radius: 5px;
+
+    padding: 6px;
+}
+
+
+.official-card img {
+
+    width: 100px;
+    height: 100px;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+}
+
+
+.official-name {
+
+    font-size: 19px;
+    font-weight: 700;
+
+    margin-top: 5px;
+}
+
+
+.official-position {
+
+    font-size: 16px;
+}
+
+
+/* ------------------------------------------------------------
+   STAFF
+   ------------------------------------------------------------ */
+
+.staff-slider {
+
+    height: calc(100% - 45px);
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+}
+
+
+.staff-card {
+
+    display: none;
+
+    width: 100%;
+    height: 100%;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 25px;
+
+    padding: 10px;
+}
+
+
+.staff-card.active {
+    display: flex;
+}
+
+
+.staff-card img {
+
+    width: 130px;
+    height: 150px;
+
+    object-fit: cover;
+
+    border-radius: 5px;
+
+    border: 1px solid #ccc;
+}
+
+
+.staff-info {
+
+    text-align: left;
+}
+
+
+.staff-name {
+
+    font-size: 24px;
+    font-weight: 700;
+}
+
+
+.staff-position {
+
+    font-size: 19px;
+
+    margin-top: 5px;
+}
+
+
+.staff-phone {
+
+    font-size: 19px;
+
+    margin-top: 5px;
+}
+
+
+/* ------------------------------------------------------------
+   PHOTO GALLERY
+   ------------------------------------------------------------ */
+
+.gallery-slider {
+
+    height: calc(100% - 45px);
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    background: #eee;
+}
+
+
+.gallery-slide {
+
+    display: none;
+
+    width: 100%;
+    height: 100%;
+
+    align-items: center;
+    justify-content: center;
+}
+
+
+.gallery-slide.active {
+    display: flex;
+}
+
+
+.gallery-slide img {
+
+    max-width: 95%;
+    max-height: 90%;
+
+    object-fit: contain;
+}
+
+
+/* ------------------------------------------------------------
+   LOADING
+   ------------------------------------------------------------ */
+
+.loading {
+
+    font-size: 20px;
+
+    color: #777;
+
+    text-align: center;
+}
+
+
+/* ------------------------------------------------------------
+   SMALLER SCREEN
+   ------------------------------------------------------------ */
+
+@media (max-width: 1200px) {
+
+    .header-title h1 {
+        font-size: 34px;
+    }
+
+    .header-title h2 {
+        font-size: 24px;
+    }
+
+    .header-title h3 {
+        font-size: 20px;
+    }
+
+    .ticker-content {
+        font-size: 21px;
+    }
+
+    .section-title {
+        font-size: 20px;
+    }
+}
