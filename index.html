@@ -1,1 +1,171 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+    <meta charset="UTF-8">
 
+    <!-- TV / Digital Board responsive viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ब्याँस गाउँपालिका डिजिटल सूचना पाटी</title>
+
+    <!--
+        CSS FILE
+        यो file पछि:
+        css/style.css
+        मा राख्ने हो।
+    -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- =========================================================
+         1. HEADER
+         ========================================================= -->
+    <header class="board-header">
+
+        <!--
+            LOGO SPACE
+
+            अहिले Logo राख्ने ठाउँ मात्र छ।
+            पछि यहाँ तपाईंले Logo को URL राख्न सक्नुहुन्छ।
+        -->
+        <div class="logo-box">
+            <span>LOGO</span>
+        </div>
+
+        <div class="header-title">
+            <h1>ब्याँस गाउँपालिका</h1>
+            <h2>गाउँकार्यपालिकाको कार्यालय</h2>
+            <h3>सुन्सेरा, दार्चुला</h3>
+        </div>
+
+    </header>
+
+
+    <!-- =========================================================
+         2. NEWS TICKER
+         ========================================================= -->
+    <section class="ticker-section">
+
+        <div class="ticker-label">
+            सूचना तथा समाचार
+        </div>
+
+        <div class="ticker-window">
+            <div id="newsTicker" class="ticker-content">
+                सूचना तथा समाचारहरू लोड हुँदैछ...
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         3. MAIN CONTENT
+         तलको भाग २ वटा column मा विभाजन गरिएको छ।
+         ========================================================= -->
+    <main class="main-content">
+
+        <!-- =====================================================
+             LEFT COLUMN
+             Notice Image Slideshow
+             ===================================================== -->
+        <section class="notice-section">
+
+            <div class="section-title">
+                सूचना
+            </div>
+
+            <div id="noticeSlider" class="notice-slider">
+
+                <div class="loading">
+                    सूचना लोड हुँदैछ...
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             RIGHT COLUMN
+             जनप्रतिनिधि + कर्मचारी + फोटो ग्यालरी
+             ===================================================== -->
+        <section class="right-column">
+
+
+            <!-- =================================================
+                 4. ELECTED OFFICIALS
+                 ================================================= -->
+            <section class="officials-section">
+
+                <div class="section-title">
+                    जनप्रतिनिधि विवरण
+                </div>
+
+                <div id="electedOfficials" class="officials-container">
+
+                    <div class="loading">
+                        जनप्रतिनिधि विवरण लोड हुँदैछ...
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 5. STAFF SLIDESHOW
+                 ================================================= -->
+            <section class="staff-section">
+
+                <div class="section-title">
+                    कर्मचारी विवरण
+                </div>
+
+                <div id="staffSlider" class="staff-slider">
+
+                    <div class="loading">
+                        कर्मचारी विवरण लोड हुँदैछ...
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 6. PHOTO GALLERY
+                 ================================================= -->
+            <section class="gallery-section">
+
+                <div class="section-title">
+                    फोटो ग्यालरी
+                </div>
+
+                <div id="photoGallery" class="gallery-slider">
+
+                    <div class="loading">
+                        फोटो ग्यालरी लोड हुँदैछ...
+                    </div>
+
+                </div>
+
+            </section>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================================================
+         JAVASCRIPT FILE
+
+         सबै Drupal API URL र Digital Board को logic
+         js/app.js मा राखिनेछ।
+         ========================================================= -->
+    <script src="js/app.js"></script>
+
+</body>
+</html>
