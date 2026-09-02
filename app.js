@@ -29,8 +29,8 @@
    Data export path:
    /digital-board-api
 */
-const NOTICE_API =
-    "https://vyansmun.gov.np/digital-board-api";
+const WORKER_API = "https://digital-board-api.shivrajbadu04.workers.dev";
+
 
 
 /*
@@ -48,8 +48,9 @@ const NOTICE_API =
    अहिले exact JSON structure verify गर्न बाँकी छ।
    त्यसैले यो URL placeholder/configuration का रूपमा राखिएको छ।
 */
-const STAFF_API =
-    "https://vyansmun.gov.np/staff-api";
+
+const NOTICE_API = `${WORKER_API}/?api=notices`;
+const STAFF_API = `${WORKER_API}/?api=staff`;
 
 
 /*
@@ -63,8 +64,7 @@ const STAFF_API =
    API path:
    /elected-officials-api
 */
-const ELECTED_OFFICIALS_API =
-    "https://vyansmun.gov.np/elected-officials-api";
+const ELECTED_OFFICIALS_API = `${WORKER_API}/?api=officials`;
 
 
 /*
@@ -79,10 +79,7 @@ const ELECTED_OFFICIALS_API =
    API path:
    /slider-api
 */
-const GALLERY_API =
-    "https://vyansmun.gov.np/slider-api";
-
-
+const GALLERY_API = `${WORKER_API}/?api=gallery`;
 
 /* ============================================================
    2. GENERAL API FUNCTION
