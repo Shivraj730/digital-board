@@ -617,8 +617,7 @@ function startStaffSlideshow() {
 async function loadGallery() {
 
     const container =
-        document.getElementById("gallerySlider");
-
+        document.getElementById("photoGallery");
     if (!container) {
         return;
     }
