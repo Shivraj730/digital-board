@@ -1,8 +1,6 @@
 /* =========================================================
    DIGITAL NOTICE BOARD
-   RESPONSIVE DESIGN
-   Target: 1920 × 1080 TV
-   Also supports laptop / smaller displays
+   Target: 1920 x 1080 TV
    ========================================================= */
 
 * {
@@ -31,21 +29,19 @@ body {
 
 
 /* =========================================================
-   MASTER BOARD
+   MAIN BOARD
    ========================================================= */
 
 .board {
     width: 100vw;
     height: 100vh;
 
-    position: relative;
-
     background: #f5f5f5;
-
-    overflow: hidden;
 
     display: flex;
     flex-direction: column;
+
+    overflow: hidden;
 }
 
 
@@ -57,14 +53,14 @@ body {
     width: 100%;
     height: 14%;
 
-    min-height: 90px;
+    min-height: 105px;
 
     display: flex;
     align-items: center;
 
     background: #fff;
 
-    border-bottom: 3px solid #1d4f91;
+    border-bottom: 4px solid #1d4f91;
 
     padding: 0.7vh 1.5vw;
 
@@ -77,8 +73,8 @@ body {
    ========================================================= */
 
 .logo-box {
-    width: 9%;
-    height: 85%;
+    width: 11%;
+    height: 86%;
 
     display: flex;
     align-items: center;
@@ -86,9 +82,13 @@ body {
 
     border: 2px dashed #aaa;
 
-    font-size: clamp(12px, 1.05vw, 22px);
-
     color: #888;
+
+    font-size: clamp(
+        16px,
+        1.1vw,
+        24px
+    );
 
     flex-shrink: 0;
 }
@@ -101,8 +101,6 @@ body {
 .header-title {
     flex: 1;
 
-    min-width: 0;
-
     text-align: center;
 
     line-height: 1.15;
@@ -111,31 +109,43 @@ body {
 .header-title h1 {
     margin: 0;
 
-    font-size: clamp(25px, 2.2vw, 44px);
+    font-size: clamp(
+        30px,
+        2.5vw,
+        50px
+    );
 
-    font-weight: 700;
+    font-weight: 800;
 
-    color: red;
+    color: #d40000;
 }
 
 .header-title h2 {
-    margin: 0.4vh 0;
+    margin: 0.5vh 0;
 
-    font-size: clamp(18px, 1.5vw, 30px);
+    font-size: clamp(
+        22px,
+        1.7vw,
+        34px
+    );
 
-    font-weight: 600;
+    font-weight: 700;
 
-    color: red;
+    color: #d40000;
 }
 
 .header-title h3 {
     margin: 0;
 
-    font-size: clamp(15px, 1.2vw, 24px);
+    font-size: clamp(
+        18px,
+        1.3vw,
+        27px
+    );
 
-    font-weight: 500;
+    font-weight: 600;
 
-    color: red;
+    color: #d40000;
 }
 
 
@@ -147,7 +157,7 @@ body {
     width: 100%;
     height: 7%;
 
-    min-height: 48px;
+    min-height: 55px;
 
     display: flex;
     align-items: stretch;
@@ -160,9 +170,9 @@ body {
 }
 
 .ticker-label {
-    width: 10%;
+    width: 12%;
 
-    min-width: 120px;
+    min-width: 170px;
 
     display: flex;
     align-items: center;
@@ -172,17 +182,19 @@ body {
 
     color: #fff;
 
-    font-size: clamp(15px, 1.25vw, 26px);
+    font-size: clamp(
+        18px,
+        1.35vw,
+        28px
+    );
 
-    font-weight: 700;
+    font-weight: 800;
 
     flex-shrink: 0;
 }
 
 .ticker-window {
     flex: 1;
-
-    min-width: 0;
 
     overflow: hidden;
 
@@ -193,24 +205,28 @@ body {
 .ticker-content {
     display: inline-flex;
 
-    align-items: center;
-
     white-space: nowrap;
 
-    font-size: clamp(16px, 1.3vw, 27px);
-
-    font-weight: 600;
+    align-items: center;
 
     padding-left: 100%;
 
     animation:
-        tickerMove 35s linear infinite;
+        tickerMove 40s linear infinite;
+
+    font-size: clamp(
+        18px,
+        1.35vw,
+        28px
+    );
+
+    font-weight: 600;
 }
 
 .ticker-item {
     display: inline-block;
 
-    margin-right: 100px;
+    margin-right: 120px;
 }
 
 @keyframes tickerMove {
@@ -227,20 +243,20 @@ body {
 
 /* =========================================================
    MAIN CONTENT
+   सूचना 35%
+   Right 65%
    ========================================================= */
 
 .main-content {
     width: 100%;
-
     height: 79%;
-
-    min-height: 0;
 
     display: grid;
 
-    grid-template-columns: 60% 40%;
+    grid-template-columns:
+        35% 65%;
 
-    gap: 0.6%;
+    gap: 0.7%;
 
     padding: 0.7%;
 
@@ -249,16 +265,17 @@ body {
 
 
 /* =========================================================
-   COMMON SECTIONS
+   COMMON SECTION
    ========================================================= */
 
 .notice-section,
 .officials-section,
 .staff-section,
 .gallery-section {
+
     background: #fff;
 
-    border: 1px solid #d5d5d5;
+    border: 2px solid #d0d0d0;
 
     border-radius: 6px;
 
@@ -274,73 +291,85 @@ body {
    ========================================================= */
 
 .section-title {
-    height: 8%;
 
-    min-height: 34px;
+    height: 11%;
+
+    min-height: 42px;
 
     display: flex;
+
     align-items: center;
 
-    padding: 0 1%;
+    justify-content: center;
 
     background: #1d4f91;
 
     color: #fff;
 
-    font-size: clamp(15px, 1.15vw, 24px);
+    font-size: clamp(
+        20px,
+        1.5vw,
+        30px
+    );
 
-    font-weight: 700;
+    font-weight: 800;
 
     flex-shrink: 0;
 }
 
 
 /* =========================================================
-   LEFT NOTICE SECTION
+   NOTICE
    ========================================================= */
 
 .notice-section {
+
     height: 100%;
 
-    min-height: 0;
-
     display: flex;
+
     flex-direction: column;
 }
 
 .notice-slider {
-    width: 100%;
 
-    height: 92%;
+    width: 100%;
+    height: 89%;
 
     position: relative;
 
     overflow: hidden;
 
-    background: #eee;
+    background: #eeeeee;
 
     display: flex;
 
     align-items: center;
-    justify-content: center;
 
-    min-height: 0;
+    justify-content: center;
 }
 
 .notice-slide {
+
     width: 100%;
     height: 100%;
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
 
     display: none;
 
     flex-direction: column;
 
     align-items: center;
+
     justify-content: center;
 
-    overflow: hidden;
+    padding: 1%;
 
-    padding: 0.5%;
+    background: #f2f2f2;
 }
 
 .notice-slide.active {
@@ -348,52 +377,59 @@ body {
 }
 
 .notice-slide img {
+
     display: block;
 
     width: auto;
     height: auto;
 
-    max-width: 97%;
-    max-height: 87%;
+    /*
+       Portrait notice लाई
+       ठूलो देखाउने
+    */
+
+    max-width: 94%;
+
+    max-height: 91%;
 
     object-fit: contain;
 
     border-radius: 4px;
-
-    flex-shrink: 1;
 }
 
-
-/* IMPORTANT:
-   JS uses notice-slide-title
-*/
-
 .notice-slide-title {
+
     width: 96%;
 
-    min-height: 35px;
+    min-height: 45px;
 
-    padding: 0.4% 1%;
+    margin-top: 0.5%;
+
+    padding: 0.5%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
 
     text-align: center;
 
-    font-size: clamp(14px, 1.15vw, 24px);
+    background: #fff;
+
+    color: #111;
+
+    font-size: clamp(
+        17px,
+        1.25vw,
+        26px
+    );
 
     line-height: 1.25;
 
-    font-weight: 700;
-
-    background: #fff;
+    font-weight: 800;
 
     border-top: 2px solid #ddd;
-
-    overflow: hidden;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    flex-shrink: 0;
 }
 
 
@@ -402,20 +438,18 @@ body {
    ========================================================= */
 
 .right-column {
+
     width: 100%;
     height: 100%;
-
-    min-width: 0;
-    min-height: 0;
 
     display: grid;
 
     grid-template-rows:
-        38%
-        31%
+        39%
+        30%
         31%;
 
-    gap: 0.8%;
+    gap: 0.9%;
 
     overflow: hidden;
 }
@@ -423,88 +457,103 @@ body {
 
 /* =========================================================
    ELECTED OFFICIALS
+   8 PERSON GRID
    ========================================================= */
 
 .officials-section {
-    min-height: 0;
 
     display: flex;
+
     flex-direction: column;
 }
 
 .officials-container {
+
     width: 100%;
+    height: 89%;
 
-    height: 92%;
+    display: grid;
 
-    min-height: 0;
+    grid-template-columns:
+        repeat(4, 1fr);
 
-    position: relative;
+    grid-template-rows:
+        repeat(2, 1fr);
 
-    overflow: hidden;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
+    gap: 1%;
 
     padding: 1%;
+
+    overflow: hidden;
 }
 
 
 /*
-   IMPORTANT:
-   सबै officials सुरुमा hidden
+   अब officials slideshow होइन।
+   सबै card सधैँ visible।
 */
 
 .official-card {
-    display: none;
 
-    width: 100%;
-    height: 100%;
+    display: flex;
+
+    flex-direction: column;
 
     align-items: center;
-    justify-content: center;
 
-    gap: 3%;
+    justify-content: center;
 
     text-align: center;
 
-    background: #fafafa;
+    background: #f8f8f8;
 
-    border-radius: 5px;
+    border: 1px solid #ddd;
 
-    padding: 1%;
+    border-radius: 6px;
+
+    padding: 2%;
+
+    min-width: 0;
 
     overflow: hidden;
 }
 
-
-/*
-   JS ले active भएको एउटा मात्रै देखाउने
-*/
-
-.official-card.active {
-    display: flex;
-}
-
 .official-card img {
-    width: clamp(65px, 7vw, 120px);
-    height: clamp(65px, 7vw, 120px);
+
+    width: clamp(
+        65px,
+        5.5vw,
+        105px
+    );
+
+    height: clamp(
+        65px,
+        5.5vw,
+        105px
+    );
 
     object-fit: cover;
 
     border-radius: 50%;
 
-    border: 2px solid #ddd;
+    border: 3px solid #1d4f91;
+
+    margin-bottom: 5px;
 
     flex-shrink: 0;
 }
 
 .official-name {
-    font-size: clamp(18px, 1.5vw, 30px);
 
-    font-weight: 700;
+    width: 100%;
+
+    font-size: clamp(
+        17px,
+        1.2vw,
+        25px
+    );
+
+    font-weight: 800;
 
     line-height: 1.25;
 
@@ -512,11 +561,20 @@ body {
 }
 
 .official-position {
-    font-size: clamp(14px, 1.15vw, 23px);
 
-    line-height: 1.3;
+    width: 100%;
 
-    margin-top: 4px;
+    margin-top: 3px;
+
+    font-size: clamp(
+        13px,
+        0.95vw,
+        20px
+    );
+
+    font-weight: 600;
+
+    line-height: 1.25;
 
     overflow-wrap: anywhere;
 }
@@ -524,166 +582,272 @@ body {
 
 /* =========================================================
    STAFF
+   MARQUEE
    ========================================================= */
 
 .staff-section {
-    min-height: 0;
 
     display: flex;
+
     flex-direction: column;
 }
 
 .staff-slider {
+
     width: 100%;
-
-    height: 92%;
-
-    min-height: 0;
+    height: 89%;
 
     position: relative;
 
+    overflow: hidden;
+
+    background: #fff;
+
     display: flex;
 
     align-items: center;
-    justify-content: center;
+}
 
-    overflow: hidden;
+.staff-track {
+
+    display: flex;
+
+    align-items: center;
+
+    width: max-content;
+
+    height: 100%;
+
+    animation:
+        staffMarquee 45s linear infinite;
 }
 
 .staff-card {
-    display: none;
 
-    width: 100%;
-    height: 100%;
+    width: 360px;
+
+    height: 92%;
+
+    margin-right: 35px;
+
+    padding: 10px 20px;
+
+    display: flex;
 
     align-items: center;
+
     justify-content: center;
 
-    gap: 3%;
+    gap: 18px;
 
-    padding: 1.5%;
+    background: #f8f8f8;
 
-    min-width: 0;
+    border: 2px solid #ddd;
 
-    overflow: hidden;
-}
+    border-radius: 8px;
 
-.staff-card.active {
-    display: flex;
+    flex-shrink: 0;
 }
 
 .staff-card img {
-    width: clamp(75px, 8vw, 135px);
-    height: clamp(85px, 10vw, 155px);
+
+    width: 90px;
+
+    height: 105px;
 
     object-fit: cover;
 
     border-radius: 5px;
 
-    border: 1px solid #ccc;
+    border: 2px solid #1d4f91;
 
     flex-shrink: 0;
 }
 
 .staff-info {
+
     min-width: 0;
 
-    max-width: 65%;
-
     text-align: left;
-
-    overflow: hidden;
 }
 
 .staff-name {
-    font-size: clamp(18px, 1.45vw, 28px);
 
-    font-weight: 700;
+    font-size: clamp(
+        18px,
+        1.25vw,
+        26px
+    );
+
+    font-weight: 800;
 
     line-height: 1.25;
-
-    overflow-wrap: anywhere;
 }
 
 .staff-position {
-    font-size: clamp(14px, 1.1vw, 22px);
 
-    margin-top: 4px;
+    margin-top: 5px;
+
+    font-size: clamp(
+        14px,
+        1vw,
+        21px
+    );
+
+    font-weight: 600;
 
     line-height: 1.3;
-
-    overflow-wrap: anywhere;
 }
 
 .staff-phone {
-    font-size: clamp(13px, 1vw, 20px);
 
-    margin-top: 4px;
+    margin-top: 5px;
 
-    line-height: 1.25;
+    font-size: clamp(
+        13px,
+        0.9vw,
+        19px
+    );
 
-    overflow-wrap: anywhere;
+    line-height: 1.2;
+}
+
+@keyframes staffMarquee {
+
+    0% {
+        transform: translateX(-10%);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
 }
 
 
 /* =========================================================
    PHOTO GALLERY
+   3 IMAGES AT A TIME
    ========================================================= */
 
 .gallery-section {
-    min-height: 0;
 
     display: flex;
+
     flex-direction: column;
 }
 
 .gallery-slider {
+
     width: 100%;
-
-    height: 92%;
-
-    min-height: 0;
+    height: 89%;
 
     position: relative;
 
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
     overflow: hidden;
 
-    background: #eee;
+    background: #eeeeee;
 }
 
-.gallery-slide {
-    display: none;
+.gallery-group {
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
 
     width: 100%;
     height: 100%;
 
-    align-items: center;
-    justify-content: center;
+    display: none;
 
-    overflow: hidden;
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 1%;
 
     padding: 1%;
 }
 
-.gallery-slide.active {
-    display: flex;
+.gallery-group.active {
+
+    display: grid;
+
+    animation:
+        galleryFade 0.8s ease;
 }
 
-.gallery-slide img {
+@keyframes galleryFade {
+
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.gallery-item {
+
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+
+    background: #fff;
+
+    border: 2px solid #ddd;
+
+    border-radius: 6px;
+
+    overflow: hidden;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+.gallery-item img {
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
     display: block;
+}
 
-    width: auto;
-    height: auto;
+.gallery-title {
 
-    max-width: 97%;
-    max-height: 96%;
+    position: absolute;
 
-    object-fit: contain;
+    bottom: 0;
+    left: 0;
+
+    width: 100%;
+
+    padding: 7px;
+
+    background:
+        rgba(0, 0, 0, 0.65);
+
+    color: #fff;
+
+    text-align: center;
+
+    font-size: clamp(
+        13px,
+        0.9vw,
+        19px
+    );
+
+    font-weight: 700;
+
+    line-height: 1.2;
 }
 
 
@@ -692,69 +856,101 @@ body {
    ========================================================= */
 
 .loading {
+
     width: 100%;
 
-    padding: 10px;
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
 
     text-align: center;
 
-    font-size: clamp(14px, 1.1vw, 22px);
+    font-size: clamp(
+        16px,
+        1.1vw,
+        23px
+    );
 
     color: #777;
 }
 
 
 /* =========================================================
-   LAPTOP / SMALLER DISPLAY
+   LAPTOP
    ========================================================= */
 
 @media (max-width: 1200px) {
 
-    .board-header {
-        padding: 0.5vh 1vw;
-    }
-
-    .logo-box {
-        width: 10%;
-    }
-
     .main-content {
-        grid-template-columns: 58% 42%;
+
+        grid-template-columns:
+            38% 62%;
     }
 
-    .official-card {
-        gap: 2%;
+    .officials-container {
+
+        gap: 0.6%;
+    }
+
+    .official-card img {
+
+        width: 60px;
+        height: 60px;
     }
 
     .staff-card {
-        gap: 2%;
+
+        width: 300px;
+
+        gap: 12px;
+    }
+
+    .staff-card img {
+
+        width: 70px;
+        height: 85px;
     }
 }
 
 
 /* =========================================================
-   VERY SMALL HEIGHT
+   SMALL HEIGHT
    ========================================================= */
 
 @media (max-height: 650px) {
 
     .board-header {
+
         height: 13%;
     }
 
     .ticker-section {
+
         height: 7%;
     }
 
     .main-content {
+
         height: 80%;
     }
 
     .section-title {
-        min-height: 28px;
+
+        min-height: 32px;
     }
 
     .notice-slide-title {
-        min-height: 28px;
+
+        min-height: 30px;
+    }
+
+    .official-card img {
+
+        width: 55px;
+        height: 55px;
     }
 }
