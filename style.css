@@ -1,13 +1,13 @@
 /* ============================================================
-   DIGITAL BOARD
-   ब्याँस गाउँपालिका, सुन्सेरा, दार्चुला
-   TV Resolution: 1920 x 1080
+   DIGITAL NOTICE BOARD
+   BASE DESIGN: 1920 × 1080
+   BYANS RURAL MUNICIPALITY
    ============================================================ */
 
 
-/* ------------------------------------------------------------
+/* ============================================================
    BASIC RESET
-   ------------------------------------------------------------ */
+   ============================================================ */
 
 * {
     box-sizing: border-box;
@@ -17,39 +17,80 @@ html,
 body {
     margin: 0;
     padding: 0;
+
     width: 100%;
     height: 100%;
+
+    overflow: hidden;
 }
 
 body {
-    font-family: "Noto Sans Devanagari", "Nirmala UI", Arial, sans-serif;
-    background: #f5f5f5;
+    font-family:
+        "Noto Sans Devanagari",
+        "Nirmala UI",
+        Arial,
+        sans-serif;
+
+    background: #000;
+
     color: #222;
+}
+
+
+/* ============================================================
+   MASTER DIGITAL BOARD
+   ------------------------------------------------------------
+   सबै design यही 1920 × 1080 canvas मा हुनेछ।
+   ============================================================ */
+
+.board {
+
+    width: 1920px;
+    height: 1080px;
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    transform-origin: top left;
+
+    background: #f5f5f5;
+
     overflow: hidden;
 }
 
 
-/* ------------------------------------------------------------
+/* ============================================================
    HEADER
-   ------------------------------------------------------------ */
+   ============================================================ */
 
 .board-header {
     width: 100%;
-    height: 15vh;
+    height: 150px;
 
     display: flex;
     align-items: center;
 
     background: white;
+
     border-bottom: 3px solid #1d4f91;
 
     padding: 10px 30px;
 }
 
-
-/* Logo को लागि reserved space */
+/* Header text color */
+.header-title h1,
+.header-title h2,
+.header-title h3 {
+    color: red;
+}
+/* ------------------------------------------------------------
+   LOGO
+   ------------------------------------------------------------ */
 
 .logo-box {
+
     width: 150px;
     height: 120px;
 
@@ -60,48 +101,65 @@ body {
     border: 2px dashed #aaa;
 
     font-size: 20px;
+
     color: #888;
 
     flex-shrink: 0;
 }
 
 
-/* Header text */
+/* ------------------------------------------------------------
+   HEADER TEXT
+   ------------------------------------------------------------ */
 
 .header-title {
+
     flex: 1;
+
     text-align: center;
+
+    min-width: 0;
 }
 
+
 .header-title h1 {
+
     margin: 0;
 
     font-size: 42px;
+
     font-weight: 700;
 }
 
+
 .header-title h2 {
+
     margin: 5px 0;
 
     font-size: 28px;
+
     font-weight: 600;
 }
 
+
 .header-title h3 {
+
     margin: 0;
 
     font-size: 23px;
+
     font-weight: 500;
 }
 
 
-/* ------------------------------------------------------------
+/* ============================================================
    NEWS TICKER
-   ------------------------------------------------------------ */
+   ============================================================ */
 
 .ticker-section {
+
     width: 100%;
-    height: 8vh;
+    height: 75px;
 
     display: flex;
     align-items: stretch;
@@ -113,39 +171,51 @@ body {
 
 
 .ticker-label {
-    min-width: 190px;
+
+    width: 190px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
+    flex-shrink: 0;
+
     background: #1d4f91;
+
     color: white;
 
     font-size: 24px;
+
     font-weight: 700;
 }
 
 
 .ticker-window {
+
     flex: 1;
+
+    min-width: 0;
 
     overflow: hidden;
 
     display: flex;
+
     align-items: center;
 }
 
 
 .ticker-content {
+
     white-space: nowrap;
 
     font-size: 25px;
+
     font-weight: 600;
 
     padding-left: 100%;
 
-    animation: tickerMove 35s linear infinite;
+    animation:
+        tickerMove 35s linear infinite;
 }
 
 
@@ -161,21 +231,26 @@ body {
 }
 
 
-/* ------------------------------------------------------------
+/* ============================================================
    MAIN CONTENT
-   ------------------------------------------------------------ */
+   ============================================================ */
 
 .main-content {
+
     width: 100%;
-    height: 77vh;
+    height: 855px;
 
     display: grid;
 
     /*
-       LEFT 60%
-       RIGHT 40%
+       LEFT  = 60%
+       RIGHT = 40%
+
+       fr प्रयोग गरिएकोले gap ले layout overflow गर्दैन।
     */
-    grid-template-columns: 60% 40%;
+
+    grid-template-columns:
+        3fr 2fr;
 
     gap: 12px;
 
@@ -183,9 +258,9 @@ body {
 }
 
 
-/* ------------------------------------------------------------
+/* ============================================================
    COMMON SECTION
-   ------------------------------------------------------------ */
+   ============================================================ */
 
 .notice-section,
 .officials-section,
@@ -199,6 +274,9 @@ body {
     border-radius: 6px;
 
     overflow: hidden;
+
+    min-width: 0;
+    min-height: 0;
 }
 
 
@@ -207,6 +285,7 @@ body {
     height: 45px;
 
     display: flex;
+
     align-items: center;
 
     padding: 0 15px;
@@ -216,17 +295,23 @@ body {
     color: white;
 
     font-size: 23px;
+
     font-weight: 700;
+
+    flex-shrink: 0;
 }
 
 
-/* ------------------------------------------------------------
+/* ============================================================
    LEFT NOTICE
-   ------------------------------------------------------------ */
+   ============================================================ */
 
 .notice-section {
 
     height: 100%;
+
+    min-width: 0;
+    min-height: 0;
 }
 
 
@@ -234,7 +319,10 @@ body {
 
     height: calc(100% - 45px);
 
+    width: 100%;
+
     display: flex;
+
     align-items: center;
     justify-content: center;
 
@@ -243,6 +331,9 @@ body {
     overflow: hidden;
 
     background: #eee;
+
+    min-width: 0;
+    min-height: 0;
 }
 
 
@@ -257,22 +348,32 @@ body {
     justify-content: center;
 
     flex-direction: column;
+
+    overflow: hidden;
 }
 
 
 .notice-slide.active {
+
     display: flex;
 }
 
 
 .notice-slide img {
 
+    display: block;
+
     max-width: 96%;
     max-height: 88%;
+
+    width: auto;
+    height: auto;
 
     object-fit: contain;
 
     border-radius: 4px;
+
+    flex-shrink: 1;
 }
 
 
@@ -285,44 +386,64 @@ body {
     text-align: center;
 
     font-size: 23px;
+
     font-weight: 700;
 
     background: white;
 
     border-top: 2px solid #ddd;
+
+    flex-shrink: 0;
 }
 
 
-/* ------------------------------------------------------------
+/* ============================================================
    RIGHT COLUMN
-   ------------------------------------------------------------ */
+   ============================================================ */
 
 .right-column {
 
+    width: 100%;
     height: 100%;
 
     display: grid;
 
+    /*
+       तीन section को उपलब्ध height भित्र राखिन्छ।
+    */
+
     grid-template-rows:
-        36%
-        34%
-        30%;
+        1.1fr
+        1fr
+        0.9fr;
 
     gap: 10px;
+
+    min-width: 0;
+    min-height: 0;
 }
 
 
-/* ------------------------------------------------------------
+/* ============================================================
    ELECTED OFFICIALS
-   ------------------------------------------------------------ */
+   ============================================================ */
+
+.officials-section {
+
+    min-height: 0;
+}
+
 
 .officials-container {
 
     height: calc(100% - 45px);
 
+    width: 100%;
+
     display: flex;
 
-    align-items: center;
+    align-items: stretch;
+
     justify-content: center;
 
     gap: 10px;
@@ -330,14 +451,24 @@ body {
     padding: 10px;
 
     overflow: hidden;
+
+    min-width: 0;
 }
 
 
 .official-card {
 
-    width: 30%;
+    /*
+       30% होइन।
 
-    height: 90%;
+       उपलब्ध space सबै card मा समान रूपमा बाँडिन्छ।
+    */
+
+    flex: 1 1 0;
+
+    min-width: 0;
+
+    height: 100%;
 
     text-align: center;
 
@@ -348,6 +479,8 @@ body {
     border-radius: 5px;
 
     padding: 6px;
+
+    overflow: hidden;
 }
 
 
@@ -355,6 +488,8 @@ body {
 
     width: 100px;
     height: 100px;
+
+    max-width: 100%;
 
     object-fit: cover;
 
@@ -365,25 +500,38 @@ body {
 .official-name {
 
     font-size: 19px;
+
     font-weight: 700;
 
     margin-top: 5px;
+
+    overflow-wrap: break-word;
 }
 
 
 .official-position {
 
     font-size: 16px;
+
+    overflow-wrap: break-word;
 }
 
 
-/* ------------------------------------------------------------
+/* ============================================================
    STAFF
-   ------------------------------------------------------------ */
+   ============================================================ */
+
+.staff-section {
+
+    min-height: 0;
+}
+
 
 .staff-slider {
 
     height: calc(100% - 45px);
+
+    width: 100%;
 
     display: flex;
 
@@ -391,6 +539,8 @@ body {
     justify-content: center;
 
     overflow: hidden;
+
+    min-width: 0;
 }
 
 
@@ -407,10 +557,13 @@ body {
     gap: 25px;
 
     padding: 10px;
+
+    min-width: 0;
 }
 
 
 .staff-card.active {
+
     display: flex;
 }
 
@@ -420,24 +573,35 @@ body {
     width: 130px;
     height: 150px;
 
+    max-width: 40%;
+
     object-fit: cover;
 
     border-radius: 5px;
 
     border: 1px solid #ccc;
+
+    flex-shrink: 1;
 }
 
 
 .staff-info {
 
     text-align: left;
+
+    min-width: 0;
+
+    overflow: hidden;
 }
 
 
 .staff-name {
 
     font-size: 24px;
+
     font-weight: 700;
+
+    overflow-wrap: break-word;
 }
 
 
@@ -446,6 +610,8 @@ body {
     font-size: 19px;
 
     margin-top: 5px;
+
+    overflow-wrap: break-word;
 }
 
 
@@ -454,16 +620,26 @@ body {
     font-size: 19px;
 
     margin-top: 5px;
+
+    overflow-wrap: break-word;
 }
 
 
-/* ------------------------------------------------------------
+/* ============================================================
    PHOTO GALLERY
-   ------------------------------------------------------------ */
+   ============================================================ */
+
+.gallery-section {
+
+    min-height: 0;
+}
+
 
 .gallery-slider {
 
     height: calc(100% - 45px);
+
+    width: 100%;
 
     display: flex;
 
@@ -473,6 +649,9 @@ body {
     overflow: hidden;
 
     background: #eee;
+
+    min-width: 0;
+    min-height: 0;
 }
 
 
@@ -485,26 +664,34 @@ body {
 
     align-items: center;
     justify-content: center;
+
+    overflow: hidden;
 }
 
 
 .gallery-slide.active {
+
     display: flex;
 }
 
 
 .gallery-slide img {
 
+    display: block;
+
     max-width: 95%;
     max-height: 90%;
+
+    width: auto;
+    height: auto;
 
     object-fit: contain;
 }
 
 
-/* ------------------------------------------------------------
+/* ============================================================
    LOADING
-   ------------------------------------------------------------ */
+   ============================================================ */
 
 .loading {
 
@@ -516,29 +703,30 @@ body {
 }
 
 
-/* ------------------------------------------------------------
-   SMALLER SCREEN
-   ------------------------------------------------------------ */
+/* ============================================================
+   IMPORTANT:
+   BROWSER ZOOM / SCREEN RESOLUTION HANDLING
+   ============================================================ */
 
-@media (max-width: 1200px) {
+@media (max-width: 1920px) {
 
-    .header-title h1 {
-        font-size: 34px;
-    }
+    /*
+       यो media query केवल browser को CSS layout
+       बिगार्न नदिनका लागि हो।
 
-    .header-title h2 {
-        font-size: 24px;
-    }
+       Board आफैं JavaScript बाट scale हुन्छ।
+    */
 
-    .header-title h3 {
-        font-size: 20px;
-    }
+}
 
-    .ticker-content {
-        font-size: 21px;
-    }
 
-    .section-title {
-        font-size: 20px;
+/* ============================================================
+   VERY SMALL DISPLAY SAFETY
+   ============================================================ */
+
+@media (max-height: 600px) {
+
+    body {
+        overflow: hidden;
     }
 }
