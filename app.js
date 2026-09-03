@@ -1,6 +1,7 @@
 /* =========================================================
-   DIGITAL BOARD - MAIN JAVASCRIPT
+   DIGITAL BOARD
    Drupal -> Cloudflare Worker -> GitHub Pages
+   Target: 1920 x 1080 TV
    ========================================================= */
 
 
@@ -25,14 +26,19 @@ const GALLERY_API =
 
 
 /* =========================================================
-   2. COMMON API FETCH FUNCTION
+   2. COMMON API FUNCTION
    ========================================================= */
 
 async function getApiData(url) {
 
     try {
 
-        const response = await fetch(url);
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        });
 
         if (!response.ok) {
             throw new Error(
@@ -46,10 +52,6 @@ async function getApiData(url) {
             return data;
         }
 
-        /*
-         * केही Drupal JSON output object भित्र
-         * data/items हुन सक्ने सम्भावनाका लागि
-         */
         if (
             data &&
             Array.isArray(data.data)
@@ -81,8 +83,7 @@ async function getApiData(url) {
 
 /* =========================================================
    3. IMAGE URL EXTRACTOR
-   Drupal बाट image field HTML को रूपमा आएमा
-   src URL निकाल्ने
+   Drupal Image field HTML बाट src निकाल्ने
    ========================================================= */
 
 function getImageUrl(imageValue) {
@@ -91,9 +92,6 @@ function getImageUrl(imageValue) {
         return "";
     }
 
-    /*
-     * यदि पहिले नै direct URL छ भने
-     */
     if (
         typeof imageValue === "string" &&
         imageValue.startsWith("http")
@@ -101,13 +99,6 @@ function getImageUrl(imageValue) {
         return imageValue;
     }
 
-    /*
-     * Drupal ले यस्तो HTML पठाउँछ:
-     *
-     * <img src="https://example.com/image.jpg">
-     *
-     * त्यसबाट src निकाल्ने
-     */
     const match =
         String(imageValue).match(
             /src=["']([^"']+)["']/i
@@ -125,6 +116,7 @@ function getImageUrl(imageValue) {
 
 /* =========================================================
    4. NEWS TICKER
+   Drupal Notice API बाट
    ========================================================= */
 
 async function loadNewsTicker() {
@@ -145,7 +137,7 @@ async function loadNewsTicker() {
     ) {
 
         container.innerHTML =
-            '<div class="loading">सूचना तथा समाचार उपलब्ध छैन।</div>';
+            '<span class="ticker-item">सूचना तथा समाचार उपलब्ध छैन।</span>';
 
         return;
     }
@@ -153,8 +145,10 @@ async function loadNewsTicker() {
     container.innerHTML = "";
 
     /*
-     * Continuous ticker का लागि data दुईपटक राखिएको
-     */
+       Continuous movement को लागि
+       data लाई दुई पटक राखिएको
+    */
+
     const tickerItems =
         [...data, ...data];
 
@@ -175,8 +169,8 @@ async function loadNewsTicker() {
 
 
 /* =========================================================
-   5. NOTICE IMAGE SLIDESHOW
-   Image नभएका notices यहाँ देखाइँदैनन्
+   5. NOTICE SLIDESHOW
+   Image भएको notice मात्र
    ========================================================= */
 
 async function loadNoticeSlideshow() {
@@ -203,18 +197,17 @@ async function loadNoticeSlideshow() {
     }
 
     /*
-     * Image भएको notice मात्र slideshow मा राख्ने
-     */
-    const noticesWithImages =
+       Image नभएका Article हटाउने
+    */
+
+    const notices =
         data.filter(item => {
 
-            const imageUrl =
-                getImageUrl(item.image);
+            return getImageUrl(item.image) !== "";
 
-            return imageUrl !== "";
         });
 
-    if (noticesWithImages.length === 0) {
+    if (notices.length === 0) {
 
         container.innerHTML =
             '<div class="loading">सूचनाको तस्वीर उपलब्ध छैन।</div>';
@@ -224,54 +217,48 @@ async function loadNoticeSlideshow() {
 
     container.innerHTML = "";
 
-    noticesWithImages.forEach(
-        (item, index) => {
+    notices.forEach((item, index) => {
 
-            const slide =
-                document.createElement("div");
+        const slide =
+            document.createElement("div");
 
-            slide.className =
-                "notice-slide";
+        slide.className =
+            "notice-slide";
 
-            if (index === 0) {
-                slide.classList.add("active");
-            }
-
-
-            const image =
-                document.createElement("img");
-
-            image.src =
-                getImageUrl(item.image);
-
-            image.alt =
-                item.title || "सूचना";
-
-
-            const title =
-                document.createElement("div");
-
-            title.className =
-                "notice-slide-title";
-
-            title.textContent =
-                item.title || "";
-
-
-            slide.appendChild(image);
-
-            slide.appendChild(title);
-
-            container.appendChild(slide);
+        if (index === 0) {
+            slide.classList.add("active");
         }
-    );
+
+        const image =
+            document.createElement("img");
+
+        image.src =
+            getImageUrl(item.image);
+
+        image.alt =
+            item.title || "सूचना";
+
+        const title =
+            document.createElement("div");
+
+        title.className =
+            "notice-slide-title";
+
+        title.textContent =
+            item.title || "";
+
+        slide.appendChild(image);
+        slide.appendChild(title);
+
+        container.appendChild(slide);
+    });
 
     startNoticeSlideshow();
 }
 
 
 /* =========================================================
-   6. NOTICE SLIDESHOW TIMER
+   6. NOTICE ROTATION
    ========================================================= */
 
 function startNoticeSlideshow() {
@@ -305,15 +292,7 @@ function startNoticeSlideshow() {
 
 /* =========================================================
    7. ELECTED OFFICIALS
-   Drupal fields:
-   Title
-   Body
-   Designation
-   Email
-   Phone
-   Photo
-   Post Box
-   Section
+   ८ जना सबै एकैपटक
    ========================================================= */
 
 async function loadElectedOfficials() {
@@ -345,118 +324,73 @@ async function loadElectedOfficials() {
 
     container.innerHTML = "";
 
-    data.forEach(
-        (person, index) => {
+    /*
+       पहिलो ८ जना
+       सबै एकैपटक देखाउने
+    */
 
-            const card =
-                document.createElement("div");
+    const officials =
+        data.slice(0, 8);
 
-            card.className =
-                "official-card";
+    officials.forEach(person => {
 
-            if (index === 0) {
-                card.classList.add("active");
-            }
+        const card =
+            document.createElement("div");
 
+        card.className =
+            "official-card";
 
-            const image =
-                document.createElement("img");
+        const imageUrl =
+            getImageUrl(person.Photo);
+
+        const image =
+            document.createElement("img");
+
+        if (imageUrl) {
 
             image.src =
-                getImageUrl(person.Photo);
+                imageUrl;
 
             image.alt =
-                person.Title || "जनप्रतिनिधि";
+                person.Title ||
+                "जनप्रतिनिधि";
 
+        } else {
 
-            /*
-             * Image उपलब्ध नभए पनि broken image icon
-             * नदेखाउन
-             */
-            if (!image.src) {
-                image.style.display =
-                    "none";
-            }
-
-
-            const name =
-                document.createElement("div");
-
-            name.className =
-                "official-name";
-
-            name.textContent =
-                person.Title || "";
-
-
-            const position =
-                document.createElement("div");
-
-            position.className =
-                "official-position";
-
-            position.textContent =
-                person.Designation || "";
-
-
-            card.appendChild(image);
-
-            card.appendChild(name);
-
-            card.appendChild(position);
-
-            container.appendChild(card);
+            image.style.display =
+                "none";
         }
-    );
 
-    startOfficialsSlideshow();
+        const name =
+            document.createElement("div");
+
+        name.className =
+            "official-name";
+
+        name.textContent =
+            person.Title || "";
+
+        const position =
+            document.createElement("div");
+
+        position.className =
+            "official-position";
+
+        position.textContent =
+            person.Designation || "";
+
+        card.appendChild(image);
+        card.appendChild(name);
+        card.appendChild(position);
+
+        container.appendChild(card);
+    });
 }
 
 
 /* =========================================================
-   8. ELECTED OFFICIALS SLIDESHOW
-   ========================================================= */
-
-function startOfficialsSlideshow() {
-
-    const slides =
-        document.querySelectorAll(
-            ".official-card"
-        );
-
-    if (slides.length <= 1) {
-        return;
-    }
-
-    let current = 0;
-
-    setInterval(() => {
-
-        slides[current]
-            .classList.remove("active");
-
-        current =
-            (current + 1) %
-            slides.length;
-
-        slides[current]
-            .classList.add("active");
-
-    }, 6000);
-}
-
-
-/* =========================================================
-   9. STAFF
-   Drupal fields:
-   Title
-   Body
-   Designation
-   Email
-   Phone
-   Photo
-   Post Box
-   Section
+   8. STAFF MARQUEE
+   एक-एक कर्मचारी बाँयाबाट दायाँ
    ========================================================= */
 
 async function loadStaff() {
@@ -486,62 +420,74 @@ async function loadStaff() {
 
     container.innerHTML = "";
 
-    data.forEach(
-        (staff, index) => {
+    const track =
+        document.createElement("div");
 
-            const card =
-                document.createElement("div");
+    track.className =
+        "staff-track";
 
-            card.className =
-                "staff-card";
+    /*
+       कर्मचारी data दुई पटक राख्दा
+       continuous marquee राम्रो हुन्छ
+    */
 
-            if (index === 0) {
-                card.classList.add("active");
-            }
+    const staffItems =
+        [...data, ...data];
 
+    staffItems.forEach(staff => {
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "staff-card";
+
+        const imageUrl =
+            getImageUrl(staff.Photo);
+
+        if (imageUrl) {
 
             const image =
                 document.createElement("img");
 
             image.src =
-                getImageUrl(staff.Photo);
+                imageUrl;
 
             image.alt =
-                staff.Title || "कर्मचारी";
+                staff.Title ||
+                "कर्मचारी";
 
+            card.appendChild(image);
+        }
 
-            if (!image.src) {
-                image.style.display =
-                    "none";
-            }
+        const info =
+            document.createElement("div");
 
+        info.className =
+            "staff-info";
 
-            const info =
-                document.createElement("div");
+        const name =
+            document.createElement("div");
 
-            info.className =
-                "staff-info";
+        name.className =
+            "staff-name";
 
+        name.textContent =
+            staff.Title || "";
 
-            const name =
-                document.createElement("div");
+        const position =
+            document.createElement("div");
 
-            name.className =
-                "staff-name";
+        position.className =
+            "staff-position";
 
-            name.textContent =
-                staff.Title || "";
+        position.textContent =
+            staff.Designation || "";
 
+        info.appendChild(name);
+        info.appendChild(position);
 
-            const position =
-                document.createElement("div");
-
-            position.className =
-                "staff-position";
-
-            position.textContent =
-                staff.Designation || "";
-
+        if (staff.Phone) {
 
             const phone =
                 document.createElement("div");
@@ -550,74 +496,32 @@ async function loadStaff() {
                 "staff-phone";
 
             phone.textContent =
-                staff.Phone || "";
+                "फोन: " + staff.Phone;
 
-
-            info.appendChild(name);
-
-            info.appendChild(position);
-
-            if (staff.Phone) {
-                info.appendChild(phone);
-            }
-
-
-            card.appendChild(image);
-
-            card.appendChild(info);
-
-            container.appendChild(card);
+            info.appendChild(phone);
         }
-    );
 
-    startStaffSlideshow();
+        card.appendChild(info);
+
+        track.appendChild(card);
+    });
+
+    container.appendChild(track);
 }
 
 
 /* =========================================================
-   10. STAFF SLIDESHOW
-   ========================================================= */
-
-function startStaffSlideshow() {
-
-    const slides =
-        document.querySelectorAll(
-            ".staff-card"
-        );
-
-    if (slides.length <= 1) {
-        return;
-    }
-
-    let current = 0;
-
-    setInterval(() => {
-
-        slides[current]
-            .classList.remove("active");
-
-        current =
-            (current + 1) %
-            slides.length;
-
-        slides[current]
-            .classList.add("active");
-
-    }, 6000);
-}
-
-
-/* =========================================================
-   11. PHOTO GALLERY
-   Drupal fields:
-   Title
-   Image
+   9. PHOTO GALLERY
+   एकपटकमा ३ फोटो
    ========================================================= */
 
 async function loadGallery() {
 
     const container =
-        document.getElementById("photoGallery");
+        document.getElementById(
+            "photoGallery"
+        );
+
     if (!container) {
         return;
     }
@@ -629,85 +533,120 @@ async function loadGallery() {
         !Array.isArray(data) ||
         data.length === 0
     ) {
+
         container.innerHTML =
             '<div class="loading">फोटो ग्यालरी उपलब्ध छैन।</div>';
+
+        return;
+    }
+
+    const galleryItems =
+        data.filter(item => {
+
+            return getImageUrl(item.Image) !== "";
+
+        });
+
+    if (galleryItems.length === 0) {
+
+        container.innerHTML =
+            '<div class="loading">फोटो उपलब्ध छैन।</div>';
+
         return;
     }
 
     container.innerHTML = "";
 
     /*
-     * पहिले valid image भएका items मात्र तयार गर्ने
-     */
-    const galleryItems = data.filter(item => {
-        return getImageUrl(item.Image) !== "";
-    });
+       प्रत्येक ३ फोटोको एउटा group
+    */
 
-    if (galleryItems.length === 0) {
-        container.innerHTML =
-            '<div class="loading">फोटो उपलब्ध छैन।</div>';
-        return;
+    const groups = [];
+
+    for (
+        let i = 0;
+        i < galleryItems.length;
+        i += 3
+    ) {
+
+        groups.push(
+            galleryItems.slice(i, i + 3)
+        );
     }
 
-    /*
-     * Gallery slides बनाउने
-     */
-    galleryItems.forEach((item, index) => {
-
-        const imageUrl =
-            getImageUrl(item.Image);
+    groups.forEach((group, groupIndex) => {
 
         const slide =
             document.createElement("div");
 
         slide.className =
-            "gallery-slide";
+            "gallery-group";
 
-        /*
-         * वास्तविक पहिलो image लाई active गर्ने
-         */
-        if (index === 0) {
+        if (groupIndex === 0) {
             slide.classList.add("active");
         }
 
-        const image =
-            document.createElement("img");
+        group.forEach(item => {
 
-        image.src =
-            imageUrl;
+            const imageBox =
+                document.createElement("div");
 
-        image.alt =
-            item.Title || "फोटो ग्यालरी";
+            imageBox.className =
+                "gallery-item";
 
-        /*
-         * Image load error भए console मा देखाउने
-         */
-        image.onerror = function () {
-            console.error(
-                "Gallery image failed to load:",
-                imageUrl
-            );
-        };
+            const image =
+                document.createElement("img");
 
-        slide.appendChild(image);
+            image.src =
+                getImageUrl(item.Image);
+
+            image.alt =
+                item.Title ||
+                "फोटो ग्यालरी";
+
+            imageBox.appendChild(image);
+
+            /*
+               Gallery title भए तल देखाउने
+            */
+
+            if (item.Title) {
+
+                const title =
+                    document.createElement("div");
+
+                title.className =
+                    "gallery-title";
+
+                title.textContent =
+                    item.Title;
+
+                imageBox.appendChild(title);
+            }
+
+            slide.appendChild(imageBox);
+        });
 
         container.appendChild(slide);
     });
 
-    startGallerySlideshow();
+    startGalleryRotation();
 }
+
+
 /* =========================================================
-   12. GALLERY SLIDESHOW
+   10. GALLERY ROTATION
+   प्रत्येक ६ second मा अर्को ३ फोटो
    ========================================================= */
 
-function startGallerySlideshow() {
+function startGalleryRotation() {
 
-    const slides =
+    const groups =
         document.querySelectorAll(
-            ".gallery-slide"
+            ".gallery-group"
         );
 
-    if (slides.length <= 1) {
+    if (groups.length <= 1) {
         return;
     }
 
@@ -715,14 +654,14 @@ function startGallerySlideshow() {
 
     setInterval(() => {
 
-        slides[current]
+        groups[current]
             .classList.remove("active");
 
         current =
             (current + 1) %
-            slides.length;
+            groups.length;
 
-        slides[current]
+        groups[current]
             .classList.add("active");
 
     }, 6000);
@@ -730,7 +669,7 @@ function startGallerySlideshow() {
 
 
 /* =========================================================
-   13. PAGE INITIALIZATION
+   11. PAGE INITIALIZATION
    ========================================================= */
 
 document.addEventListener(
@@ -741,9 +680,6 @@ document.addEventListener(
             "Digital Board loading..."
         );
 
-        /*
-         * सबै API एकसाथ load गर्ने
-         */
         loadNewsTicker();
 
         loadNoticeSlideshow();
