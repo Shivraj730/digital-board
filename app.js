@@ -289,103 +289,228 @@ function startNoticeSlideshow() {
     }, 7000);
 }
 
-
 /* =========================================================
    7. ELECTED OFFICIALS
    ८ जना सबै एकैपटक
+   Vertical Card:
+   फोटो → नाम → पद → फोन नं.
    ========================================================= */
 
 async function loadElectedOfficials() {
 
     const container =
-        document.getElementById(
-            "electedOfficials"
-        );
+        document.getElementById("electedOfficials");
 
     if (!container) {
         return;
     }
 
-    const data =
-        await getApiData(
-            ELECTED_OFFICIALS_API
-        );
+    try {
 
-    if (
-        !Array.isArray(data) ||
-        data.length === 0
-    ) {
+        const data =
+            await getApiData(
+                ELECTED_OFFICIALS_API
+            );
 
-        container.innerHTML =
-            '<div class="loading">जनप्रतिनिधि विवरण उपलब्ध छैन।</div>';
+        if (
+            !Array.isArray(data) ||
+            data.length === 0
+        ) {
 
-        return;
-    }
+            container.innerHTML =
+                '<div class="loading">जनप्रतिनिधि विवरण उपलब्ध छैन।</div>';
 
-    container.innerHTML = "";
-
-    /*
-       पहिलो ८ जना
-       सबै एकैपटक देखाउने
-    */
-
-    const officials =
-        data.slice(0, 8);
-
-    officials.forEach(person => {
-
-        const card =
-            document.createElement("div");
-
-        card.className =
-            "official-card";
-
-        const imageUrl =
-            getImageUrl(person.Photo);
-
-        const image =
-            document.createElement("img");
-
-        if (imageUrl) {
-
-            image.src =
-                imageUrl;
-
-            image.alt =
-                person.Title ||
-                "जनप्रतिनिधि";
-
-        } else {
-
-            image.style.display =
-                "none";
+            return;
         }
 
-        const name =
-            document.createElement("div");
+        /*
+           पहिलो ८ जना मात्र
+           सबै एकैपटक देखाउने
+        */
 
-        name.className =
-            "official-name";
+        const officials =
+            data.slice(0, 8);
 
-        name.textContent =
-            person.Title || "";
+        container.innerHTML = "";
 
-        const position =
-            document.createElement("div");
+        officials.forEach(person => {
 
-        position.className =
-            "official-position";
+            /* =========================
+               CARD
+               ========================= */
 
-        position.textContent =
-            person.Designation || "";
+            const card =
+                document.createElement("div");
 
-        card.appendChild(image);
-        card.appendChild(name);
-        card.appendChild(position);
+            card.className =
+                "official-card";
 
-        container.appendChild(card);
-    });
+
+            /* =========================
+               PHOTO WRAPPER
+               ========================= */
+
+            const photoWrap =
+                document.createElement("div");
+
+            photoWrap.className =
+                "official-photo-wrap";
+
+
+            const imageUrl =
+                getImageUrl(person.Photo);
+
+
+            if (imageUrl) {
+
+                const image =
+                    document.createElement("img");
+
+                image.src =
+                    imageUrl;
+
+                image.alt =
+                    person.Title ||
+                    "जनप्रतिनिधि";
+
+                image.loading =
+                    "lazy";
+
+                photoWrap.appendChild(
+                    image
+                );
+
+            } else {
+
+                const emptyPhoto =
+                    document.createElement("div");
+
+                emptyPhoto.className =
+                    "official-photo-empty";
+
+                emptyPhoto.textContent =
+                    "फोटो";
+
+                photoWrap.appendChild(
+                    emptyPhoto
+                );
+            }
+
+
+            /* =========================
+               INFORMATION WRAPPER
+               ========================= */
+
+            const info =
+                document.createElement("div");
+
+            info.className =
+                "official-info";
+
+
+            /* =========================
+               NAME
+               ========================= */
+
+            const name =
+                document.createElement("div");
+
+            name.className =
+                "official-name";
+
+            name.textContent =
+                person.Title || "";
+
+
+            /* =========================
+               DESIGNATION
+               ========================= */
+
+            const position =
+                document.createElement("div");
+
+            position.className =
+                "official-position";
+
+            position.textContent =
+                person.Designation || "";
+
+
+            /* =========================
+               PHONE
+               ========================= */
+
+            const phone =
+                document.createElement("div");
+
+            phone.className =
+                "official-phone";
+
+            if (person.Phone) {
+
+                phone.textContent =
+                    "फोन: " + person.Phone;
+
+            } else {
+
+                phone.style.display =
+                    "none";
+            }
+
+
+            /* =========================
+               BUILD INFORMATION
+               ========================= */
+
+            info.appendChild(
+                name
+            );
+
+            info.appendChild(
+                position
+            );
+
+            info.appendChild(
+                phone
+            );
+
+
+            /* =========================
+               BUILD CARD
+               ========================= */
+
+            card.appendChild(
+                photoWrap
+            );
+
+            card.appendChild(
+                info
+            );
+
+
+            /* =========================
+               ADD CARD TO CONTAINER
+               ========================= */
+
+            container.appendChild(
+                card
+            );
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Elected Officials API Error:",
+            error
+        );
+
+        container.innerHTML =
+            '<div class="loading">जनप्रतिनिधि विवरण लोड गर्न सकिएन।</div>';
+    }
 }
+
+
+
 
 
 /* =========================================================
