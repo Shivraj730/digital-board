@@ -35,7 +35,8 @@ body {
    ========================================================= */
 
 .board {
-    --board-scale: 1;
+    --board-scale-x: 1;
+    --board-scale-y: 1;
 
     position: absolute;
 
@@ -47,7 +48,8 @@ body {
 
     transform:
         translate(-50%, -50%)
-        scale(var(--board-scale));
+        scaleX(var(--board-scale-x))
+        scaleY(var(--board-scale-y));
 
     transform-origin: center center;
 
@@ -58,8 +60,6 @@ body {
 
     overflow: hidden;
 }
-
-
 /* =========================================================
    HEADER
    Master size: 1920 x 151px
