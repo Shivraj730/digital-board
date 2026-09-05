@@ -1,6 +1,7 @@
 /* =========================================================
    DIGITAL NOTICE BOARD
-   Target: 1920 x 1080 TV
+   MASTER CANVAS: 1920 x 1080
+   DISPLAY: 16:9
    ========================================================= */
 
 * {
@@ -13,6 +14,7 @@ body {
     padding: 0;
     width: 100%;
     height: 100%;
+
     overflow: hidden;
 }
 
@@ -29,12 +31,25 @@ body {
 
 
 /* =========================================================
-   MAIN BOARD
+   MASTER BOARD
    ========================================================= */
 
 .board {
-    width: 100vw;
-    height: 100vh;
+    --board-scale: 1;
+
+    position: absolute;
+
+    width: 1920px;
+    height: 1080px;
+
+    left: 50%;
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%)
+        scale(var(--board-scale));
+
+    transform-origin: center center;
 
     background: #f5f5f5;
 
@@ -47,13 +62,12 @@ body {
 
 /* =========================================================
    HEADER
+   Master size: 1920 x 151px
    ========================================================= */
 
 .board-header {
     width: 100%;
-    height: 14%;
-
-    min-height: 105px;
+    height: 151px;
 
     display: flex;
     align-items: center;
@@ -62,7 +76,7 @@ body {
 
     border-bottom: 4px solid #1d4f91;
 
-    padding: 0.7vh 1.5vw;
+    padding: 10px 29px;
 
     flex-shrink: 0;
 }
@@ -73,8 +87,8 @@ body {
    ========================================================= */
 
 .logo-box {
-    width: 11%;
-    height: 86%;
+    width: 211px;
+    height: 130px;
 
     display: flex;
     align-items: center;
@@ -84,11 +98,7 @@ body {
 
     color: #888;
 
-    font-size: clamp(
-        16px,
-        1.1vw,
-        24px
-    );
+    font-size: 21px;
 
     flex-shrink: 0;
 }
@@ -109,11 +119,7 @@ body {
 .header-title h1 {
     margin: 0;
 
-    font-size: clamp(
-        30px,
-        2.5vw,
-        50px
-    );
+    font-size: 48px;
 
     font-weight: 800;
 
@@ -121,13 +127,9 @@ body {
 }
 
 .header-title h2 {
-    margin: 0.5vh 0;
+    margin: 5px 0;
 
-    font-size: clamp(
-        22px,
-        1.7vw,
-        34px
-    );
+    font-size: 33px;
 
     font-weight: 700;
 
@@ -137,11 +139,7 @@ body {
 .header-title h3 {
     margin: 0;
 
-    font-size: clamp(
-        18px,
-        1.3vw,
-        27px
-    );
+    font-size: 25px;
 
     font-weight: 600;
 
@@ -151,13 +149,12 @@ body {
 
 /* =========================================================
    NEWS TICKER
+   Master height: 76px
    ========================================================= */
 
 .ticker-section {
     width: 100%;
-    height: 7%;
-
-    min-height: 55px;
+    height: 76px;
 
     display: flex;
     align-items: stretch;
@@ -170,9 +167,7 @@ body {
 }
 
 .ticker-label {
-    width: 12%;
-
-    min-width: 170px;
+    width: 230px;
 
     display: flex;
     align-items: center;
@@ -182,11 +177,7 @@ body {
 
     color: #fff;
 
-    font-size: clamp(
-        18px,
-        1.35vw,
-        28px
-    );
+    font-size: 26px;
 
     font-weight: 800;
 
@@ -214,11 +205,7 @@ body {
     animation:
         tickerMove 40s linear infinite;
 
-    font-size: clamp(
-        18px,
-        1.35vw,
-        28px
-    );
+    font-size: 26px;
 
     font-weight: 600;
 }
@@ -243,22 +230,23 @@ body {
 
 /* =========================================================
    MAIN CONTENT
-   सूचना 35%
-   Right 65%
+   Master height: 853px
+
+   Left  = 35%
+   Right = 65%
    ========================================================= */
 
 .main-content {
     width: 100%;
-    height: 79%;
+    height: 853px;
 
     display: grid;
 
-    grid-template-columns:
-        35% 65%;
+    grid-template-columns: 35fr 65fr;
 
-    gap: 0.7%;
+    gap: 14px;
 
-    padding: 0.7%;
+    padding: 14px;
 
     overflow: hidden;
 }
@@ -291,7 +279,6 @@ body {
    ========================================================= */
 
 .section-title {
-
     height: 11%;
 
     min-height: 42px;
@@ -299,18 +286,13 @@ body {
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
     background: #1d4f91;
 
     color: #fff;
 
-    font-size: clamp(
-        20px,
-        1.5vw,
-        30px
-    );
+    font-size: 29px;
 
     font-weight: 800;
 
@@ -323,16 +305,13 @@ body {
    ========================================================= */
 
 .notice-section {
-
     height: 100%;
 
     display: flex;
-
     flex-direction: column;
 }
 
 .notice-slider {
-
     width: 100%;
     height: 89%;
 
@@ -345,12 +324,10 @@ body {
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 }
 
 .notice-slide {
-
     width: 100%;
     height: 100%;
 
@@ -364,10 +341,9 @@ body {
     flex-direction: column;
 
     align-items: center;
-
     justify-content: center;
 
-    padding: 1%;
+    padding: 10px;
 
     background: #f2f2f2;
 }
@@ -377,19 +353,12 @@ body {
 }
 
 .notice-slide img {
-
     display: block;
 
     width: auto;
     height: auto;
 
-    /*
-       Portrait notice लाई
-       ठूलो देखाउने
-    */
-
     max-width: 94%;
-
     max-height: 91%;
 
     object-fit: contain;
@@ -398,19 +367,17 @@ body {
 }
 
 .notice-slide-title {
-
     width: 96%;
 
     min-height: 45px;
 
-    margin-top: 0.5%;
+    margin-top: 5px;
 
-    padding: 0.5%;
+    padding: 5px;
 
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
     text-align: center;
@@ -419,11 +386,7 @@ body {
 
     color: #111;
 
-    font-size: clamp(
-        17px,
-        1.25vw,
-        26px
-    );
+    font-size: 24px;
 
     line-height: 1.25;
 
@@ -435,21 +398,24 @@ body {
 
 /* =========================================================
    RIGHT COLUMN
+   39% / 30% / 31%
+
+   fr प्रयोग गरिएको छ ताकि gap सहित
+   total height overflow नगरोस्।
    ========================================================= */
 
 .right-column {
-
     width: 100%;
     height: 100%;
 
     display: grid;
 
     grid-template-rows:
-        39%
-        30%
-        31%;
+        39fr
+        30fr
+        31fr;
 
-    gap: 0.9%;
+    gap: 10px;
 
     overflow: hidden;
 }
@@ -457,55 +423,30 @@ body {
 
 /* =========================================================
    ELECTED OFFICIALS
-   8 PERSON GRID
+   8 PERSONS
+   ONE ROW
+   8 VERTICAL COLUMNS
    ========================================================= */
 
 .officials-section {
-
     display: flex;
-
     flex-direction: column;
 }
 
 .officials-container {
-
     width: 100%;
     height: 89%;
 
     display: grid;
 
     grid-template-columns:
-        repeat(4, 1fr);
-
-    grid-template-rows:
-        repeat(2, 1fr);
-
-    gap: 1%;
-
-    padding: 1%;
-
-    overflow: hidden;
-}
-
-/* =========================================================
-   ELECTED OFFICIALS
-   ८ जना = एउटै row मा ८ वटा vertical columns
-   ========================================================= */
-
-.officials-container {
-    width: 100%;
-    height: 100%;
-
-    display: grid;
-
-    /* ८ वटा बराबर vertical columns */
-    grid-template-columns:
         repeat(8, minmax(0, 1fr));
 
-    /* केवल एउटा row */
     grid-template-rows: 1fr;
 
     gap: 0;
+
+    padding: 8px;
 
     min-width: 0;
     min-height: 0;
@@ -525,6 +466,7 @@ body {
     overflow: hidden;
 
     display: flex;
+
     flex-direction: column;
 
     align-items: center;
@@ -534,38 +476,33 @@ body {
 
     padding: 5px;
 
-    box-sizing: border-box;
-
-    /* Vertical line */
     border-right: 1px solid #cbd5e1;
 
     background: #f8fafc;
 }
 
-
-/* अन्तिम card मा दायाँ line नचाहिने */
 .official-card:last-child {
     border-right: none;
 }
 
 
 /* =========================================================
-   PHOTO
+   OFFICIAL PHOTO
    ========================================================= */
 
 .official-photo-wrap {
-    width: clamp(48px, 4vw, 72px);
-    height: clamp(48px, 4vw, 72px);
+    width: 72px;
+    height: 72px;
 
     flex: 0 0 auto;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
     margin-bottom: 5px;
 }
-
 
 .official-photo-wrap img,
 .official-photo-empty {
@@ -577,13 +514,11 @@ body {
     border-radius: 50%;
 
     border: 2px solid #1d4f91;
-
-    box-sizing: border-box;
 }
-
 
 .official-photo-empty {
     display: flex;
+
     align-items: center;
     justify-content: center;
 
@@ -596,7 +531,7 @@ body {
 
 
 /* =========================================================
-   INFORMATION
+   OFFICIAL INFORMATION
    ========================================================= */
 
 .official-info {
@@ -608,7 +543,7 @@ body {
 
 
 /* =========================================================
-   NAME
+   OFFICIAL NAME
    ========================================================= */
 
 .official-name {
@@ -616,7 +551,7 @@ body {
 
     color: #123b6d;
 
-    font-size: clamp(12px, .85vw, 18px);
+    font-size: 17px;
 
     font-weight: 800;
 
@@ -631,7 +566,7 @@ body {
 
 
 /* =========================================================
-   DESIGNATION
+   OFFICIAL DESIGNATION
    ========================================================= */
 
 .official-position {
@@ -641,7 +576,7 @@ body {
 
     color: #334155;
 
-    font-size: clamp(10px, .68vw, 15px);
+    font-size: 14px;
 
     font-weight: 600;
 
@@ -656,7 +591,7 @@ body {
 
 
 /* =========================================================
-   PHONE
+   OFFICIAL PHONE
    ========================================================= */
 
 .official-phone {
@@ -666,7 +601,7 @@ body {
 
     color: #475569;
 
-    font-size: clamp(9px, .58vw, 13px);
+    font-size: 12px;
 
     font-weight: 500;
 
@@ -678,20 +613,19 @@ body {
 
     text-overflow: ellipsis;
 }
+
+
 /* =========================================================
    STAFF
-   MARQUEE
+   ONE EMPLOYEE AT A TIME / MARQUEE
    ========================================================= */
 
 .staff-section {
-
     display: flex;
-
     flex-direction: column;
 }
 
 .staff-slider {
-
     width: 100%;
     height: 89%;
 
@@ -707,13 +641,11 @@ body {
 }
 
 .staff-track {
-
     display: flex;
 
     align-items: center;
 
     width: max-content;
-
     height: 100%;
 
     animation:
@@ -721,9 +653,7 @@ body {
 }
 
 .staff-card {
-
     width: 360px;
-
     height: 92%;
 
     margin-right: 35px;
@@ -733,7 +663,6 @@ body {
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
     gap: 18px;
@@ -748,9 +677,7 @@ body {
 }
 
 .staff-card img {
-
     width: 90px;
-
     height: 105px;
 
     object-fit: cover;
@@ -763,19 +690,13 @@ body {
 }
 
 .staff-info {
-
     min-width: 0;
 
     text-align: left;
 }
 
 .staff-name {
-
-    font-size: clamp(
-        18px,
-        1.25vw,
-        26px
-    );
+    font-size: 24px;
 
     font-weight: 800;
 
@@ -783,14 +704,9 @@ body {
 }
 
 .staff-position {
-
     margin-top: 5px;
 
-    font-size: clamp(
-        14px,
-        1vw,
-        21px
-    );
+    font-size: 19px;
 
     font-weight: 600;
 
@@ -798,14 +714,9 @@ body {
 }
 
 .staff-phone {
-
     margin-top: 5px;
 
-    font-size: clamp(
-        13px,
-        0.9vw,
-        19px
-    );
+    font-size: 17px;
 
     line-height: 1.2;
 }
@@ -828,14 +739,11 @@ body {
    ========================================================= */
 
 .gallery-section {
-
     display: flex;
-
     flex-direction: column;
 }
 
 .gallery-slider {
-
     width: 100%;
     height: 89%;
 
@@ -847,7 +755,6 @@ body {
 }
 
 .gallery-group {
-
     position: absolute;
 
     top: 0;
@@ -861,13 +768,12 @@ body {
     grid-template-columns:
         repeat(3, 1fr);
 
-    gap: 1%;
+    gap: 10px;
 
-    padding: 1%;
+    padding: 10px;
 }
 
 .gallery-group.active {
-
     display: grid;
 
     animation:
@@ -888,7 +794,6 @@ body {
 }
 
 .gallery-item {
-
     position: relative;
 
     width: 100%;
@@ -905,12 +810,10 @@ body {
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 }
 
 .gallery-item img {
-
     width: 100%;
     height: 100%;
 
@@ -920,7 +823,6 @@ body {
 }
 
 .gallery-title {
-
     position: absolute;
 
     bottom: 0;
@@ -937,11 +839,7 @@ body {
 
     text-align: center;
 
-    font-size: clamp(
-        13px,
-        0.9vw,
-        19px
-    );
+    font-size: 17px;
 
     font-weight: 700;
 
@@ -954,101 +852,17 @@ body {
    ========================================================= */
 
 .loading {
-
     width: 100%;
-
     height: 100%;
 
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
     text-align: center;
 
-    font-size: clamp(
-        16px,
-        1.1vw,
-        23px
-    );
+    font-size: 21px;
 
     color: #777;
-}
-
-
-/* =========================================================
-   LAPTOP
-   ========================================================= */
-
-@media (max-width: 1200px) {
-
-    .main-content {
-
-        grid-template-columns:
-            38% 62%;
-    }
-
-    .officials-container {
-
-        gap: 0.6%;
-    }
-
-    .official-card img {
-
-        width: 60px;
-        height: 60px;
-    }
-
-    .staff-card {
-
-        width: 300px;
-
-        gap: 12px;
-    }
-
-    .staff-card img {
-
-        width: 70px;
-        height: 85px;
-    }
-}
-
-
-/* =========================================================
-   SMALL HEIGHT
-   ========================================================= */
-
-@media (max-height: 650px) {
-
-    .board-header {
-
-        height: 13%;
-    }
-
-    .ticker-section {
-
-        height: 7%;
-    }
-
-    .main-content {
-
-        height: 80%;
-    }
-
-    .section-title {
-
-        min-height: 32px;
-    }
-
-    .notice-slide-title {
-
-        min-height: 30px;
-    }
-
-    .official-card img {
-
-        width: 55px;
-        height: 55px;
-    }
 }
