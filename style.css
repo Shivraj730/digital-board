@@ -87,22 +87,22 @@ body {
    ========================================================= */
 
 .logo-box {
-    width: 211px;
-    height: 130px;
+    width: 150px;
+    height: 150px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border: 2px dashed #aaa;
-
-    color: #888;
-
-    font-size: 21px;
-
-    flex-shrink: 0;
+    overflow: hidden;
 }
 
+.logo-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
 
 /* =========================================================
    HEADER TITLE
