@@ -952,48 +952,21 @@ body {
    FLAG WAVING ANIMATION
    ========================================================= */
 
-@keyframes nepalFlagWave {
+.nepal-flag-box {
+    width: 190px;
+    height: 150px;
 
-    0% {
-        transform:
-            perspective(800px)
-            rotateY(0deg)
-            rotateZ(0deg);
-    }
+    flex-shrink: 0;
 
-    20% {
-        transform:
-            perspective(800px)
-            rotateY(-8deg)
-            rotateZ(-1deg);
-    }
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-    40% {
-        transform:
-            perspective(800px)
-            rotateY(6deg)
-            rotateZ(1deg);
-    }
+.nepal-flag {
+    width: 125px;
+    height: 140px;
 
-    60% {
-        transform:
-            perspective(800px)
-            rotateY(-6deg)
-            rotateZ(-1deg);
-    }
-
-    80% {
-        transform:
-            perspective(800px)
-            rotateY(5deg)
-            rotateZ(1deg);
-    }
-
-    100% {
-        transform:
-            perspective(800px)
-            rotateY(0deg)
-            rotateZ(0deg);
-    }
-
+    object-fit: contain;
+    display: block;
 }
