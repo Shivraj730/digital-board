@@ -551,7 +551,9 @@ body {
 
     font-weight: 800;
 
-    line-height: 1.4;
+    line-height: 1.5;
+  
+   margin-top: 15px;
 
     white-space: nowrap;
 
