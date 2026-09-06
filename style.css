@@ -394,7 +394,7 @@ body {
 
 /* =========================================================
    RIGHT COLUMN
-   39% / 30% / 31%
+   34% / 30% / 36%
 
    fr प्रयोग गरिएको छ ताकि gap सहित
    total height overflow नगरोस्।
@@ -551,7 +551,7 @@ body {
 
     font-weight: 800;
 
-    line-height: 1.2;
+    line-height: 1.4;
 
     white-space: nowrap;
 
@@ -576,7 +576,7 @@ body {
 
     font-weight: 600;
 
-    line-height: 1.2;
+    line-height: 1.3;
 
     white-space: nowrap;
 
@@ -601,7 +601,7 @@ body {
 
     font-weight: 500;
 
-    line-height: 1.15;
+    line-height: 1.5;
 
     white-space: nowrap;
 
