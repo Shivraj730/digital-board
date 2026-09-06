@@ -917,38 +917,6 @@ body {
 
 /* =========================================================
    NEPAL FLAG
-   ========================================================= */
-
-.nepal-flag-box {
-    width: 190px;
-    height: 150px;
-
-    flex-shrink: 0;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    perspective: 800px;
-}
-
-
-/* वास्तविक PNG झण्डा */
-
-.nepal-flag {
-    width: 125px;
-    height: 140px;
-
-    object-fit: contain;
-    display: block;
-
-    transform-origin: left center;
-
-    animation: nepalFlagWave 2.5s ease-in-out infinite;
-}
-
-
-/* =========================================================
    FLAG WAVING ANIMATION
    ========================================================= */
 
