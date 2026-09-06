@@ -22,28 +22,82 @@
     <!-- =========================================================
          1. HEADER
          ========================================================= -->
-    <div id= "board" class="board"> 
-		<header class="board-header">
+   <div id= "board" class="board"> 
+	<header class="board-header">
 
-        <!--
-            LOGO SPACE
+    <!-- LOGO -->
+    <div class="logo-box">
+        <img
+            src="https://raw.githubusercontent.com/Shivraj730/digital-board/main/logo.png"
+            alt="ब्याँस गाउँपालिका लोगो"
+        >
+    </div>
 
-            अहिले Logo राख्ने ठाउँ मात्र छ।
-            पछि यहाँ तपाईंले Logo को URL राख्न सक्नुहुन्छ।
-        -->
-        <div class="logo-box">
-    <img
-        src="https://raw.githubusercontent.com/Shivraj730/digital-board/main/logo.png"
-        alt="ब्याँस गाउँपालिका लोगो"
-    >
-</div>
-        <div class="header-title">
-            <h2>ब्याँस गाउँपालिका</h2>
-            <h1>गाउँकार्यपालिकाको कार्यालय</h1>
-            <h3>सुन्सेरा, दार्चुला</h3>
-        </div>
 
-    </header>
+    <!-- CENTER TITLE -->
+    <div class="header-title">
+        <h2>ब्याँस गाउँपालिका</h2>
+        <h1>गाउँकार्यपालिकाको कार्यालय</h1>
+        <h3>सुन्सेरा, दार्चुला</h3>
+    </div>
+
+
+    <!-- NEPAL FLAG -->
+    <div class="nepal-flag-box">
+
+        <svg
+            class="nepal-flag"
+            viewBox="0 0 180 230"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-label="नेपालको राष्ट्रिय झण्डा"
+        >
+
+            <!-- Flag shape -->
+            <path
+                class="flag-cloth"
+                d="M15 10
+                   L125 75
+                   L55 75
+                   L145 135
+                   L55 135
+                   L15 215
+                   Z"
+            />
+
+            <!-- Moon -->
+            <path
+                class="flag-moon"
+                d="M55 48
+                   A25 25 0 1 0 55 82
+                   A19 19 0 1 1 55 48
+                   Z"
+            />
+
+            <!-- Sun -->
+            <circle
+                class="flag-sun"
+                cx="72"
+                cy="120"
+                r="15"
+            />
+
+            <!-- Sun rays -->
+            <g class="flag-rays">
+                <line x1="72" y1="98" x2="72" y2="92"/>
+                <line x1="72" y1="142" x2="72" y2="148"/>
+                <line x1="50" y1="120" x2="44" y2="120"/>
+                <line x1="94" y1="120" x2="100" y2="120"/>
+                <line x1="57" y1="105" x2="53" y2="101"/>
+                <line x1="87" y1="135" x2="91" y2="139"/>
+                <line x1="87" y1="105" x2="91" y2="101"/>
+                <line x1="57" y1="135" x2="53" y2="139"/>
+            </g>
+
+        </svg>
+
+    </div>
+
+</header>
 
     <!-- =========================================================
          2. NEWS TICKER
