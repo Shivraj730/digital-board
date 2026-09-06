@@ -394,7 +394,7 @@ body {
 
 /* =========================================================
    RIGHT COLUMN
-   34% / 30% / 36%
+   31% / 30% / 39%
 
    fr प्रयोग गरिएको छ ताकि gap सहित
    total height overflow नगरोस्।
@@ -407,9 +407,9 @@ body {
     display: grid;
 
     grid-template-rows:
-        34fr
+        31fr
         30fr
-        36fr;
+        39fr;
 
     gap: 10px;
 
