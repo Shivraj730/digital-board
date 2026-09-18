@@ -9,20 +9,20 @@
    1. API CONFIGURATION
    ========================================================= */
 
-const WORKER_API =
+window.DIGITAL_BOARD_API =
     "https://digital-board-api.shivrajbadu04.workers.dev";
 
 const NOTICE_API =
-    `${WORKER_API}/?api=notices`;
+    `${window.DIGITAL_BOARD_API}/?api=notices`;
 
 const STAFF_API =
-    `${WORKER_API}/?api=staff`;
+    `${window.DIGITAL_BOARD_API}/?api=staff`;
 
 const ELECTED_OFFICIALS_API =
-    `${WORKER_API}/?api=officials`;
+    `${window.DIGITAL_BOARD_API}/?api=officials`;
 
 const GALLERY_API =
-    `${WORKER_API}/?api=gallery`;
+    `${window.DIGITAL_BOARD_API}/?api=gallery`;
 
 
 /* =========================================================
