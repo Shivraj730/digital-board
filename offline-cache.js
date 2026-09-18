@@ -8,16 +8,15 @@ const OFFLINE_STORE_NAME = "apiData";
 
 const IMAGE_CACHE_NAME = "digital-board-v2-images";
 
-const WORKER_API =
+const OFFLINE_WORKER_API =
     "https://digital-board-api.shivrajbadu04.workers.dev";
 
 const API_LIST = {
-    notices: `${WORKER_API}?api=notices`,
-    staff: `${WORKER_API}?api=staff`,
-    officials: `${WORKER_API}?api=officials`,
-    gallery: `${WORKER_API}?api=gallery`
+    notices: `${OFFLINE_WORKER_API}?api=notices`,
+    staff: `${OFFLINE_WORKER_API}?api=staff`,
+    officials: `${OFFLINE_WORKER_API}?api=officials`,
+    gallery: `${OFFLINE_WORKER_API}?api=gallery`
 };
-
 
 // ============================================
 // OPEN INDEXED DB
