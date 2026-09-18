@@ -1,539 +1,554 @@
-```javascript
-/* =========================================================
-   DIGITAL BOARD OFFLINE + AUTO UPDATE
-   Drupal -> Cloudflare Worker -> GitHub Pages
-   ========================================================= */
+// ============================================
+// DIGITAL BOARD OFFLINE CACHE
+// ============================================
 
-(function () {
+const OFFLINE_DB_NAME = "digital-board-offline-db";
+const OFFLINE_DB_VERSION = 1;
+const OFFLINE_STORE_NAME = "apiData";
 
-    "use strict";
+const IMAGE_CACHE_NAME = "digital-board-v2-images";
+
+const WORKER_API =
+    "https://digital-board-api.shivrajbadu04.workers.dev";
+
+const API_LIST = {
+    notices: `${WORKER_API}?api=notices`,
+    staff: `${WORKER_API}?api=staff`,
+    officials: `${WORKER_API}?api=officials`,
+    gallery: `${WORKER_API}?api=gallery`
+};
 
 
-    /* =====================================================
-       SERVICE WORKER REGISTER
-       ===================================================== */
+// ============================================
+// OPEN INDEXED DB
+// ============================================
 
-    if ("serviceWorker" in navigator) {
+function openOfflineDB() {
+    return new Promise((resolve, reject) => {
 
-        window.addEventListener("load", function () {
+        const request = indexedDB.open(
+            OFFLINE_DB_NAME,
+            OFFLINE_DB_VERSION
+        );
 
-            navigator.serviceWorker
-                .register("./service-worker.js")
-                .then(function (registration) {
+        request.onupgradeneeded = function (event) {
 
-                    console.log(
-                        "Offline Service Worker registered:",
-                        registration.scope
-                    );
+            const db = event.target.result;
 
-                })
-                .catch(function (error) {
+            if (!db.objectStoreNames.contains(OFFLINE_STORE_NAME)) {
 
-                    console.error(
-                        "Service Worker registration failed:",
-                        error
-                    );
+                db.createObjectStore(
+                    OFFLINE_STORE_NAME,
+                    { keyPath: "key" }
+                );
 
-                });
+            }
+        };
+
+        request.onsuccess = function () {
+            resolve(request.result);
+        };
+
+        request.onerror = function () {
+            reject(request.error);
+        };
+
+    });
+}
+
+
+// ============================================
+// SAVE DATA TO INDEXED DB
+// ============================================
+
+async function saveOfflineData(key, data) {
+
+    try {
+
+        const db = await openOfflineDB();
+
+        return new Promise((resolve, reject) => {
+
+            const transaction =
+                db.transaction(
+                    OFFLINE_STORE_NAME,
+                    "readwrite"
+                );
+
+            const store =
+                transaction.objectStore(
+                    OFFLINE_STORE_NAME
+                );
+
+            store.put({
+                key: key,
+                data: data,
+                updatedAt: Date.now()
+            });
+
+            transaction.oncomplete = function () {
+                resolve(true);
+            };
+
+            transaction.onerror = function () {
+                reject(transaction.error);
+            };
 
         });
 
-    } else {
+    } catch (error) {
 
-        console.warn(
-            "यो browser ले Service Worker support गर्दैन।"
+        console.error(
+            "Offline DB save error:",
+            error
         );
 
+        return false;
     }
+}
 
 
-    /* =====================================================
-       API CONFIGURATION
-       ===================================================== */
+// ============================================
+// GET DATA FROM INDEXED DB
+// ============================================
 
-    const WORKER_API =
-        "https://digital-board-api.shivrajbadu04.workers.dev";
+async function getOfflineData(key) {
 
-    const SYNC_APIS = [
+    try {
 
-        `${WORKER_API}/?api=notices`,
+        const db = await openOfflineDB();
 
-        `${WORKER_API}/?api=staff`,
+        return new Promise((resolve, reject) => {
 
-        `${WORKER_API}/?api=officials`,
+            const transaction =
+                db.transaction(
+                    OFFLINE_STORE_NAME,
+                    "readonly"
+                );
 
-        `${WORKER_API}/?api=gallery`
+            const store =
+                transaction.objectStore(
+                    OFFLINE_STORE_NAME
+                );
 
-    ];
+            const request =
+                store.get(key);
 
+            request.onsuccess = function () {
 
-    /* =====================================================
-       SETTINGS
-       ===================================================== */
-
-    /*
-       Internet फर्किएपछि तुरुन्त जाँच गर्ने
-    */
-
-    const ONLINE_CHECK_DELAY = 3000;
-
-
-    /*
-       प्रत्येक ५ मिनेटमा नयाँ data जाँच गर्ने
-
-       TV लामो समयसम्म खुला रहँदा
-       नयाँ Drupal data स्वतः update गर्न
-    */
-
-    const UPDATE_CHECK_INTERVAL =
-        5 * 60 * 1000;
-
-
-    /*
-       API response को fingerprint
-       browser localStorage मा राख्ने
-    */
-
-    const STORAGE_KEY =
-        "digital-board-api-fingerprint";
-
-
-    /* =====================================================
-       NORMALIZE API DATA
-       ===================================================== */
-
-    function normalizeData(data) {
-
-        if (Array.isArray(data)) {
-
-            return data;
-
-        }
-
-        if (
-            data &&
-            Array.isArray(data.data)
-        ) {
-
-            return data.data;
-
-        }
-
-        if (
-            data &&
-            Array.isArray(data.items)
-        ) {
-
-            return data.items;
-
-        }
-
-        return [];
-
-    }
-
-
-    /* =====================================================
-       CREATE FINGERPRINT
-       ===================================================== */
-
-    async function createFingerprint(data) {
-
-        try {
-
-            const text =
-                JSON.stringify(data);
-
-            /*
-               Browser मा SHA-256 उपलब्ध भएमा
-               त्यसबाट छोटो hash बनाउने
-            */
-
-            if (
-                window.crypto &&
-                window.crypto.subtle
-            ) {
-
-                const encoder =
-                    new TextEncoder();
-
-                const encoded =
-                    encoder.encode(text);
-
-                const hashBuffer =
-                    await crypto.subtle.digest(
-                        "SHA-256",
-                        encoded
-                    );
-
-                const hashArray =
-                    Array.from(
-                        new Uint8Array(hashBuffer)
-                    );
-
-                return hashArray
-                    .map(function (byte) {
-
-                        return byte
-                            .toString(16)
-                            .padStart(2, "0");
-
-                    })
-                    .join("");
-
-            }
-
-            /*
-               SHA-256 उपलब्ध नभए fallback
-            */
-
-            return text;
-
-        } catch (error) {
-
-            console.error(
-                "Fingerprint creation error:",
-                error
-            );
-
-            return "";
-
-        }
-
-    }
-
-
-    /* =====================================================
-       GET CURRENT API FINGERPRINT
-       ===================================================== */
-
-    async function getCurrentFingerprint() {
-
-        const allData = [];
-
-
-        for (
-            let i = 0;
-            i < SYNC_APIS.length;
-            i++
-        ) {
-
-            const apiUrl =
-                SYNC_APIS[i];
-
-
-            try {
-
-                /*
-                   cache: no-store
-
-                   Service Worker को पुरानो response
-                   प्रयोग नगरी Internet बाट नयाँ data
-                   जाँच गर्न अनुरोध
-                */
-
-                const response =
-                    await fetch(
-                        apiUrl,
-                        {
-                            method: "GET",
-                            headers: {
-                                "Accept":
-                                    "application/json"
-                            },
-                            cache: "no-store"
-                        }
-                    );
-
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        "HTTP " +
-                        response.status
-                    );
-
+                if (request.result) {
+                    resolve(request.result.data);
+                } else {
+                    resolve(null);
                 }
 
+            };
 
-                const data =
-                    await response.json();
+            request.onerror = function () {
+                reject(request.error);
+            };
 
+        });
 
-                allData.push(
-                    normalizeData(data)
-                );
+    } catch (error) {
 
-
-            } catch (error) {
-
-                /*
-                   एउटा API पनि fail भयो भने
-                   अहिले Internet reliable छैन।
-                */
-
-                console.warn(
-                    "API sync check failed:",
-                    apiUrl,
-                    error
-                );
-
-                return null;
-
-            }
-
-        }
-
-
-        return createFingerprint(
-            allData
+        console.error(
+            "Offline DB read error:",
+            error
         );
 
+        return null;
+    }
+}
+
+
+// ============================================
+// NORMALIZE API DATA
+// ============================================
+
+function normalizeData(data) {
+
+    if (Array.isArray(data)) {
+        return data;
     }
 
+    if (data && Array.isArray(data.data)) {
+        return data.data;
+    }
 
-    /* =====================================================
-       SAVE INITIAL FINGERPRINT
-       ===================================================== */
+    if (data && Array.isArray(data.items)) {
+        return data.items;
+    }
 
-    async function saveInitialFingerprint() {
+    if (data && Array.isArray(data.results)) {
+        return data.results;
+    }
 
-        try {
-
-            /*
-               अहिलेको online data लिने
-            */
-
-            const fingerprint =
-                await getCurrentFingerprint();
-
-
-            if (!fingerprint) {
-
-                return;
-
-            }
+    return [];
+}
 
 
-            /*
-               पहिलो पटक fingerprint नभएमा
-               अहिलेको data save गर्ने
-            */
+// ============================================
+// EXTRACT IMAGE URL
+// ============================================
 
-            const oldFingerprint =
-                localStorage.getItem(
-                    STORAGE_KEY
-                );
+function getImageUrl(imageValue) {
+
+    if (!imageValue) {
+        return null;
+    }
+
+    if (typeof imageValue !== "string") {
+        return null;
+    }
+
+    const value = imageValue.trim();
+
+    // Direct image URL
+    if (
+        value.startsWith("http://") ||
+        value.startsWith("https://")
+    ) {
+        return value;
+    }
+
+    // HTML image src
+    const match = value.match(
+        /<img[^>]+src=["']([^"']+)["']/i
+    );
+
+    if (match && match[1]) {
+        return match[1];
+    }
+
+    return null;
+}
 
 
-            if (!oldFingerprint) {
+// ============================================
+// FIND IMAGE URLs INSIDE DATA
+// ============================================
 
-                localStorage.setItem(
-                    STORAGE_KEY,
-                    fingerprint
-                );
+function extractImageUrls(data) {
 
-                console.log(
-                    "Initial API fingerprint saved."
-                );
+    const urls = new Set();
 
-            }
+    function scan(value) {
 
-        } catch (error) {
-
-            console.warn(
-                "Initial fingerprint error:",
-                error
-            );
-
+        if (!value) {
+            return;
         }
 
+        if (typeof value === "string") {
+
+            const url = getImageUrl(value);
+
+            if (url) {
+                urls.add(url);
+            }
+
+            return;
+        }
+
+        if (Array.isArray(value)) {
+
+            value.forEach(item => {
+                scan(item);
+            });
+
+            return;
+        }
+
+        if (typeof value === "object") {
+
+            Object.values(value).forEach(item => {
+                scan(item);
+            });
+
+        }
     }
 
+    scan(data);
 
-    /* =====================================================
-       CHECK FOR NEW DATA
-       ===================================================== */
+    return Array.from(urls);
+}
 
-    async function checkForUpdates() {
 
-        /*
-           Browser ले network छैन भनिरहेको छ भने
-           API request नगर्ने
-        */
+// ============================================
+// CACHE IMAGE
+// ============================================
+
+async function cacheImage(url) {
+
+    if (!url) {
+        return;
+    }
+
+    try {
+
+        const cache =
+            await caches.open(
+                IMAGE_CACHE_NAME
+            );
+
+        const existing =
+            await cache.match(url);
+
+        if (existing) {
+            return;
+        }
+
+        const response = await fetch(
+            url,
+            {
+                method: "GET",
+                mode: "no-cors",
+                cache: "no-cache"
+            }
+        );
 
         if (
-            navigator.onLine === false
+            response.ok ||
+            response.type === "opaque"
         ) {
 
-            console.log(
-                "Offline: update check skipped."
+            await cache.put(
+                url,
+                response
             );
-
-            return;
 
         }
 
+    } catch (error) {
+
+        console.warn(
+            "Image cache failed:",
+            url,
+            error
+        );
+
+    }
+}
+
+
+// ============================================
+// CACHE ALL IMAGES
+// ============================================
+
+async function cacheImages(data) {
+
+    const imageUrls =
+        extractImageUrls(data);
+
+    if (!imageUrls.length) {
+        return;
+    }
+
+    console.log(
+        "Caching images:",
+        imageUrls.length
+    );
+
+    for (const url of imageUrls) {
+
+        await cacheImage(url);
+
+    }
+}
+
+
+// ============================================
+// SYNC ONE API
+// ============================================
+
+async function syncApi(
+    key,
+    url
+) {
+
+    try {
 
         console.log(
-            "Internet available: checking for updates..."
+            "Syncing:",
+            key
         );
 
-
-        const newFingerprint =
-            await getCurrentFingerprint();
-
-
-        /*
-           API request fail भयो भने
-           केही नगर्ने।
-           Cached board चलिरहन्छ।
-        */
-
-        if (!newFingerprint) {
-
-            console.log(
-                "Internet/API unavailable. Existing board continues."
+        const response =
+            await fetch(
+                url,
+                {
+                    method: "GET",
+                    cache: "no-store"
+                }
             );
 
-            return;
+        if (!response.ok) {
+
+            throw new Error(
+                `HTTP ${response.status}`
+            );
 
         }
 
+        const json =
+            await response.json();
 
-        const oldFingerprint =
-            localStorage.getItem(
-                STORAGE_KEY
-            );
+        const data =
+            normalizeData(json);
 
+        // Save JSON data
+        await saveOfflineData(
+            key,
+            data
+        );
 
-        /*
-           पहिलो पटक fingerprint छैन भने
-           अहिलेको data save गर्ने
-        */
-
-        if (!oldFingerprint) {
-
-            localStorage.setItem(
-                STORAGE_KEY,
-                newFingerprint
-            );
-
-            console.log(
-                "API fingerprint initialized."
-            );
-
-            return;
-
-        }
-
-
-        /*
-           Data परिवर्तन भएको छैन
-        */
-
-        if (
-            oldFingerprint === newFingerprint
-        ) {
-
-            console.log(
-                "No new Drupal data."
-            );
-
-            return;
-
-        }
-
-
-        /*
-           नयाँ data भेटियो
-        */
+        // Cache images
+        await cacheImages(data);
 
         console.log(
-            "New Drupal data detected. Reloading Digital Board..."
+            "Offline cache updated:",
+            key
         );
 
+        return data;
 
-        localStorage.setItem(
-            STORAGE_KEY,
-            newFingerprint
+    } catch (error) {
+
+        console.warn(
+            "API sync failed:",
+            key,
+            error
         );
 
+        // Return old cached data
+        const oldData =
+            await getOfflineData(key);
 
-        /*
-           थोरै delay दिएर reload गर्ने
+        return oldData || [];
 
-           यसले API/cache update पूरा हुन
-           समय दिन्छ।
-        */
+    }
+}
 
-        setTimeout(function () {
 
-            window.location.reload();
+// ============================================
+// SYNC ALL APIs
+// ============================================
 
-        }, 1000);
+async function syncAll() {
+
+    if (!navigator.onLine) {
+
+        console.log(
+            "Offline. Using saved data."
+        );
+
+        return;
+    }
+
+    console.log(
+        "Starting offline data sync..."
+    );
+
+    for (
+        const [key, url]
+        of Object.entries(API_LIST)
+    ) {
+
+        await syncApi(
+            key,
+            url
+        );
 
     }
 
+    console.log(
+        "Offline data sync complete."
+    );
 
-    /* =====================================================
-       INTERNET RETURN DETECTION
-       ===================================================== */
-
-    window.addEventListener(
-        "online",
-        function () {
-
-            console.log(
-                "Internet connection restored."
-            );
+    // Tell app.js that new data is available
+    window.dispatchEvent(
+        new CustomEvent(
+            "digitalBoardDataUpdated"
+        )
+    );
+}
 
 
-            /*
-               Internet फर्किएपछि
-               ३ second पछि update check
-            */
+// ============================================
+// INITIAL SYNC
+// ============================================
 
-            setTimeout(
-                checkForUpdates,
-                ONLINE_CHECK_DELAY
-            );
+window.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
+        setTimeout(
+            () => {
+                syncAll();
+            },
+            2000
+        );
+
+    }
+);
+
+
+// ============================================
+// WHEN INTERNET RETURNS
+// ============================================
+
+window.addEventListener(
+    "online",
+    function () {
+
+        console.log(
+            "Internet connection restored."
+        );
+
+        setTimeout(
+            () => {
+                syncAll();
+            },
+            3000
+        );
+
+    }
+);
+
+
+// ============================================
+// PERIODIC SYNC
+// EVERY 5 MINUTES
+// ============================================
+
+setInterval(
+    function () {
+
+        if (navigator.onLine) {
+            syncAll();
         }
-    );
+
+    },
+    5 * 60 * 1000
+);
 
 
-    /* =====================================================
-       INITIAL ONLINE CHECK
-       ===================================================== */
+// ============================================
+// PUBLIC API
+// ============================================
 
-    window.addEventListener(
-        "load",
-        function () {
+window.OfflineCache = {
 
-            /*
-               Page load भएको केही समयपछि
-               initial fingerprint save गर्ने
-            */
+    save: saveOfflineData,
 
-            setTimeout(
-                saveInitialFingerprint,
-                5000
-            );
+    get: getOfflineData,
 
-        }
-    );
+    sync: syncApi,
 
+    syncAll: syncAll,
 
-    /* =====================================================
-       PERIODIC UPDATE CHECK
-       ===================================================== */
+    getImageUrl: getImageUrl,
 
-    setInterval(
-        checkForUpdates,
-        UPDATE_CHECK_INTERVAL
-    );
+    extractImageUrls: extractImageUrls
 
-
-})();
-```
+};
