@@ -30,6 +30,18 @@ const GALLERY_API =
    ========================================================= */
 
 async function getApiData(url) {
+    let cacheKey = "";
+
+    if (url === NOTICE_API) {
+        cacheKey = "notices";
+    } else if (url === STAFF_API) {
+        cacheKey = "staff";
+    } else if (url === ELECTED_OFFICIALS_API) {
+        cacheKey = "officials";
+    } else if (url === GALLERY_API) {
+        cacheKey = "gallery";
+    }
+
     try {
         const response = await fetch(url, {
             method: "GET",
@@ -56,22 +68,7 @@ async function getApiData(url) {
             normalizedData = data.results;
         }
 
-        /*
-         * Internet बाट नयाँ data सफलतापूर्वक आयो।
-         * त्यसैले यसलाई offline cache मा पनि save गर्ने।
-         */
-        let cacheKey = "";
-
-        if (url === NOTICE_API) {
-            cacheKey = "notices";
-        } else if (url === STAFF_API) {
-            cacheKey = "staff";
-        } else if (url === ELECTED_OFFICIALS_API) {
-            cacheKey = "officials";
-        } else if (url === GALLERY_API) {
-            cacheKey = "gallery";
-        }
-
+        // Save latest successful API data to IndexedDB
         if (
             cacheKey &&
             window.OfflineCache &&
@@ -88,25 +85,11 @@ async function getApiData(url) {
     } catch (error) {
 
         console.warn(
-            "API unavailable. Trying offline cache:",
-            url
+            "API unavailable. Using offline cache:",
+            cacheKey
         );
 
-        /*
-         * API उपलब्ध नभए पुरानो cached data प्रयोग गर्ने।
-         */
-        let cacheKey = "";
-
-        if (url === NOTICE_API) {
-            cacheKey = "notices";
-        } else if (url === STAFF_API) {
-            cacheKey = "staff";
-        } else if (url === ELECTED_OFFICIALS_API) {
-            cacheKey = "officials";
-        } else if (url === GALLERY_API) {
-            cacheKey = "gallery";
-        }
-
+        // Read previously saved data
         if (
             cacheKey &&
             window.OfflineCache &&
@@ -120,8 +103,9 @@ async function getApiData(url) {
                 cachedData.length > 0
             ) {
                 console.log(
-                    "Using offline cached data:",
-                    cacheKey
+                    "Offline cache loaded:",
+                    cacheKey,
+                    cachedData.length
                 );
 
                 return cachedData;
@@ -129,14 +113,13 @@ async function getApiData(url) {
         }
 
         console.warn(
-            "No offline cached data available:",
+            "No cached data available:",
             cacheKey
         );
 
         return [];
     }
 }
-
 /* =========================================================
    3. IMAGE URL EXTRACTOR
    Drupal Image field HTML बाट src निकाल्ने
