@@ -30,9 +30,7 @@ const GALLERY_API =
    ========================================================= */
 
 async function getApiData(url) {
-
     try {
-
         const response = await fetch(url, {
             method: "GET",
             headers: {
@@ -41,45 +39,103 @@ async function getApiData(url) {
         });
 
         if (!response.ok) {
-            throw new Error(
-                `HTTP Error: ${response.status}`
-            );
+            throw new Error(`HTTP Error: ${response.status}`);
         }
 
         const data = await response.json();
 
+        let normalizedData = [];
+
         if (Array.isArray(data)) {
-            return data;
+            normalizedData = data;
+        } else if (data && Array.isArray(data.data)) {
+            normalizedData = data.data;
+        } else if (data && Array.isArray(data.items)) {
+            normalizedData = data.items;
+        } else if (data && Array.isArray(data.results)) {
+            normalizedData = data.results;
+        }
+
+        /*
+         * Internet बाट नयाँ data सफलतापूर्वक आयो।
+         * त्यसैले यसलाई offline cache मा पनि save गर्ने।
+         */
+        let cacheKey = "";
+
+        if (url === NOTICE_API) {
+            cacheKey = "notices";
+        } else if (url === STAFF_API) {
+            cacheKey = "staff";
+        } else if (url === ELECTED_OFFICIALS_API) {
+            cacheKey = "officials";
+        } else if (url === GALLERY_API) {
+            cacheKey = "gallery";
         }
 
         if (
-            data &&
-            Array.isArray(data.data)
+            cacheKey &&
+            window.OfflineCache &&
+            typeof window.OfflineCache.save === "function"
         ) {
-            return data.data;
+            await window.OfflineCache.save(
+                cacheKey,
+                normalizedData
+            );
         }
 
-        if (
-            data &&
-            Array.isArray(data.items)
-        ) {
-            return data.items;
-        }
-
-        return [];
+        return normalizedData;
 
     } catch (error) {
 
-        console.error(
-            "API Loading Error:",
-            url,
-            error
+        console.warn(
+            "API unavailable. Trying offline cache:",
+            url
+        );
+
+        /*
+         * API उपलब्ध नभए पुरानो cached data प्रयोग गर्ने।
+         */
+        let cacheKey = "";
+
+        if (url === NOTICE_API) {
+            cacheKey = "notices";
+        } else if (url === STAFF_API) {
+            cacheKey = "staff";
+        } else if (url === ELECTED_OFFICIALS_API) {
+            cacheKey = "officials";
+        } else if (url === GALLERY_API) {
+            cacheKey = "gallery";
+        }
+
+        if (
+            cacheKey &&
+            window.OfflineCache &&
+            typeof window.OfflineCache.get === "function"
+        ) {
+            const cachedData =
+                await window.OfflineCache.get(cacheKey);
+
+            if (
+                Array.isArray(cachedData) &&
+                cachedData.length > 0
+            ) {
+                console.log(
+                    "Using offline cached data:",
+                    cacheKey
+                );
+
+                return cachedData;
+            }
+        }
+
+        console.warn(
+            "No offline cached data available:",
+            cacheKey
         );
 
         return [];
     }
 }
-
 
 /* =========================================================
    3. IMAGE URL EXTRACTOR
