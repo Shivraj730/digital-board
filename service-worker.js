@@ -1,179 +1,226 @@
-/* =========================================================
-   DIGITAL BOARD OFFLINE SERVICE WORKER
-   ========================================================= */
+// ============================================
+// DIGITAL BOARD SERVICE WORKER
+// ============================================
 
-const CACHE_VERSION = "digital-board-v1";
+const CACHE_VERSION = "digital-board-v2";
 
-const STATIC_CACHE = CACHE_VERSION + "-static";
-const API_CACHE = CACHE_VERSION + "-api";
-const IMAGE_CACHE = CACHE_VERSION + "-images";
+const STATIC_CACHE =
+    CACHE_VERSION + "-static";
 
+const API_CACHE =
+    CACHE_VERSION + "-api";
 
-/* =========================================================
-   API URL PATTERN
-   ========================================================= */
-
-const API_PATHS = [
-    "api=notices",
-    "api=staff",
-    "api=officials",
-    "api=gallery"
-];
+const IMAGE_CACHE =
+    CACHE_VERSION + "-images";
 
 
-/* =========================================================
-   INSTALL
-   ========================================================= */
+// ============================================
+// API TYPES
+// ============================================
 
-self.addEventListener("install", function (event) {
-
-    event.waitUntil(
-
-        caches.open(STATIC_CACHE)
-            .then(function (cache) {
-
-                return cache.addAll([
-                    "./",
-                    "./index.html",
-                    "./style.css",
-                    "./app.js",
-                    "./offline-cache.js"
-                ]);
-
-            })
-
-    );
-
-    self.skipWaiting();
-
-});
+const API_TYPES = new Set([
+    "notices",
+    "staff",
+    "officials",
+    "gallery"
+]);
 
 
-/* =========================================================
-   ACTIVATE
-   ========================================================= */
+// ============================================
+// INSTALL
+// ============================================
 
-self.addEventListener("activate", function (event) {
+self.addEventListener(
+    "install",
+    event => {
 
-    event.waitUntil(
+        event.waitUntil(
 
-        caches.keys()
-            .then(function (cacheNames) {
+            caches.open(STATIC_CACHE)
+                .then(cache => {
 
-                return Promise.all(
+                    return Promise.all(
+                        [
+                            "./",
+                            "./index.html",
+                            "./style.css",
+                            "./app.js",
+                            "./offline-cache.js",
+                            "./service-worker.js"
+                        ].map(file => {
 
-                    cacheNames
-                        .filter(function (cacheName) {
+                            return cache.add(file)
+                                .catch(error => {
 
-                            return (
-                                cacheName !== STATIC_CACHE &&
-                                cacheName !== API_CACHE &&
-                                cacheName !== IMAGE_CACHE
-                            );
+                                    console.warn(
+                                        "Static cache failed:",
+                                        file,
+                                        error
+                                    );
+
+                                });
 
                         })
-                        .map(function (cacheName) {
+                    );
 
-                            return caches.delete(cacheName);
+                })
 
-                        })
-
-                );
-
-            })
-
-    );
-
-    self.clients.claim();
-
-});
-
-
-/* =========================================================
-   FETCH
-   ========================================================= */
-
-self.addEventListener("fetch", function (event) {
-
-    const request = event.request;
-
-    if (request.method !== "GET") {
-        return;
-    }
-
-    const url = new URL(request.url);
-
-
-    /* =====================================================
-       API REQUEST
-       ===================================================== */
-
-    const isApiRequest =
-        API_PATHS.some(function (apiPath) {
-
-            return url.search.includes(apiPath);
-
-        });
-
-
-    if (isApiRequest) {
-
-        event.respondWith(
-            networkFirstAPI(request)
         );
 
-        return;
+        self.skipWaiting();
+
     }
+);
 
 
-    /* =====================================================
-       IMAGE REQUEST
-       ===================================================== */
+// ============================================
+// ACTIVATE
+// ============================================
 
-    if (request.destination === "image") {
+self.addEventListener(
+    "activate",
+    event => {
 
-        event.respondWith(
-            cacheFirstImage(request)
-        );
+        event.waitUntil(
 
-        return;
-    }
+            caches.keys()
+                .then(cacheNames => {
 
+                    return Promise.all(
 
-    /* =====================================================
-       WEBSITE FILES
-       ===================================================== */
+                        cacheNames
+                            .filter(
+                                cacheName =>
+                                    cacheName !== STATIC_CACHE &&
+                                    cacheName !== API_CACHE &&
+                                    cacheName !== IMAGE_CACHE
+                            )
+                            .map(
+                                cacheName =>
+                                    caches.delete(cacheName)
+                            )
 
-    if (
-        url.origin === self.location.origin
-    ) {
+                    );
 
-        event.respondWith(
-            networkFirstStatic(request)
+                })
+                .then(() => {
+
+                    return self.clients.claim();
+
+                })
+
         );
 
     }
+);
 
-});
+
+// ============================================
+// FETCH
+// ============================================
+
+self.addEventListener(
+    "fetch",
+    event => {
+
+        const request =
+            event.request;
+
+        const url =
+            new URL(request.url);
 
 
-/* =========================================================
-   API NETWORK FIRST
-   Internet छ भने नयाँ data
-   Internet छैन भने पुरानो data
-   ========================================================= */
+        // ------------------------------------
+        // API REQUEST
+        // ------------------------------------
 
-async function networkFirstAPI(request) {
+        const apiType =
+            url.searchParams.get("api");
 
-    const cache =
-        await caches.open(API_CACHE);
+        if (
+            API_TYPES.has(apiType)
+        ) {
+
+            event.respondWith(
+                networkFirstAPI(request)
+            );
+
+            return;
+        }
+
+
+        // ------------------------------------
+        // IMAGE REQUEST
+        // ------------------------------------
+
+        if (
+            request.destination === "image"
+        ) {
+
+            event.respondWith(
+                cacheFirstImage(request)
+            );
+
+            return;
+        }
+
+
+        // ------------------------------------
+        // PAGE NAVIGATION
+        // ------------------------------------
+
+        if (
+            request.mode === "navigate"
+        ) {
+
+            event.respondWith(
+                networkFirstPage(request)
+            );
+
+            return;
+        }
+
+
+        // ------------------------------------
+        // SAME ORIGIN STATIC FILE
+        // ------------------------------------
+
+        if (
+            url.origin === self.location.origin
+        ) {
+
+            event.respondWith(
+                networkFirstStatic(request)
+            );
+
+        }
+
+    }
+);
+
+
+// ============================================
+// API: NETWORK FIRST
+// ============================================
+
+async function networkFirstAPI(
+    request
+) {
 
     try {
 
         const response =
             await fetch(request);
 
-        if (response && response.ok) {
+        if (
+            response.ok ||
+            response.type === "opaque"
+        ) {
+
+            const cache =
+                await caches.open(
+                    API_CACHE
+                );
 
             await cache.put(
                 request,
@@ -187,18 +234,24 @@ async function networkFirstAPI(request) {
     } catch (error) {
 
         console.warn(
-            "Internet छैन। Cached API data प्रयोग हुँदैछ।"
+            "API offline:",
+            request.url
         );
 
-        const cachedResponse =
+        const cache =
+            await caches.open(
+                API_CACHE
+            );
+
+        const cached =
             await cache.match(request);
 
-        if (cachedResponse) {
-
-            return cachedResponse;
-
+        if (cached) {
+            return cached;
         }
 
+
+        // Empty fallback
         return new Response(
             JSON.stringify([]),
             {
@@ -215,17 +268,21 @@ async function networkFirstAPI(request) {
 }
 
 
-/* =========================================================
-   IMAGE CACHE FIRST
-   पहिले cache मा image खोज्ने
-   नभए Internet बाट ल्याउने
-   ========================================================= */
+// ============================================
+// IMAGE: CACHE FIRST
+// ============================================
 
-async function cacheFirstImage(request) {
+async function cacheFirstImage(
+    request
+) {
 
     const cache =
-        await caches.open(IMAGE_CACHE);
+        await caches.open(
+            IMAGE_CACHE
+        );
 
+
+    // First try cache
     const cached =
         await cache.match(request);
 
@@ -235,12 +292,17 @@ async function cacheFirstImage(request) {
 
     }
 
+
+    // Then Internet
     try {
 
         const response =
             await fetch(request);
 
-        if (response && response.ok) {
+        if (
+            response.ok ||
+            response.type === "opaque"
+        ) {
 
             await cache.put(
                 request,
@@ -254,10 +316,12 @@ async function cacheFirstImage(request) {
     } catch (error) {
 
         console.warn(
-            "Image offline मा उपलब्ध छैन:",
+            "Image unavailable offline:",
             request.url
         );
 
+
+        // No image available
         return new Response(
             "",
             {
@@ -270,21 +334,25 @@ async function cacheFirstImage(request) {
 }
 
 
-/* =========================================================
-   STATIC FILES
-   ========================================================= */
+// ============================================
+// PAGE: NETWORK FIRST
+// ============================================
 
-async function networkFirstStatic(request) {
-
-    const cache =
-        await caches.open(STATIC_CACHE);
+async function networkFirstPage(
+    request
+) {
 
     try {
 
         const response =
             await fetch(request);
 
-        if (response && response.ok) {
+        if (response.ok) {
+
+            const cache =
+                await caches.open(
+                    STATIC_CACHE
+                );
 
             await cache.put(
                 request,
@@ -297,13 +365,93 @@ async function networkFirstStatic(request) {
 
     } catch (error) {
 
+        console.warn(
+            "Page offline."
+        );
+
+
+        // Try exact page
+        const cache =
+            await caches.open(
+                STATIC_CACHE
+            );
+
         const cached =
             await cache.match(request);
 
         if (cached) {
-
             return cached;
+        }
 
+
+        // Finally use index.html
+        const indexPage =
+            await cache.match(
+                "./index.html"
+            );
+
+        if (indexPage) {
+            return indexPage;
+        }
+
+
+        return new Response(
+            "Digital Board is offline.",
+            {
+                status: 503,
+                headers: {
+                    "Content-Type":
+                        "text/plain; charset=utf-8"
+                }
+            }
+        );
+
+    }
+
+}
+
+
+// ============================================
+// STATIC FILE: NETWORK FIRST
+// ============================================
+
+async function networkFirstStatic(
+    request
+) {
+
+    try {
+
+        const response =
+            await fetch(request);
+
+        if (response.ok) {
+
+            const cache =
+                await caches.open(
+                    STATIC_CACHE
+                );
+
+            await cache.put(
+                request,
+                response.clone()
+            );
+
+        }
+
+        return response;
+
+    } catch (error) {
+
+        const cache =
+            await caches.open(
+                STATIC_CACHE
+            );
+
+        const cached =
+            await cache.match(request);
+
+        if (cached) {
+            return cached;
         }
 
         return Response.error();
